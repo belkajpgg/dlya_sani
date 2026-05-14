@@ -7,13 +7,21 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
-  <!-- Firebase SDK -->
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    /* ---- FLUID BASE ---- */
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; font-size: clamp(14px, 1.2vw + 10px, 16px); }
+
+    html, body {
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+      /* Fluid base font: 14px on 320px → 16px on 1280px */
+      font-size: clamp(14px, 1.2vw + 10px, 16px);
+    }
+
+    /* ---- FLUID TYPE SCALE ---- */
+    /* Use these classes in HTML instead of hard px/rem sizes */
     .fs-hero   { font-size: clamp(2rem,   8vw, 6rem);   line-height: 1.05; }
     .fs-hero2  { font-size: clamp(1.75rem, 7vw, 5rem);  line-height: 1.05; }
     .fs-h2     { font-size: clamp(1.4rem,  4vw, 3rem);  line-height: 1.1;  }
@@ -22,93 +30,277 @@
     .fs-body   { font-size: clamp(0.8rem,  1.5vw, 1rem); }
     .fs-sm     { font-size: clamp(0.7rem,  1.2vw, 0.875rem); }
     .fs-salary { font-size: clamp(1.1rem,  3vw, 1.875rem); line-height: 1.2; }
+
+    /* ---- FLUID SPACING ---- */
     .gap-fluid  { gap: clamp(0.75rem, 2vw, 1.5rem); }
     .p-fluid    { padding: clamp(1rem, 3vw, 2.5rem); }
     .px-fluid   { padding-left: clamp(0.75rem, 3vw, 2.5rem); padding-right: clamp(0.75rem, 3vw, 2.5rem); }
     .py-fluid   { padding-top: clamp(0.75rem, 2vw, 1.5rem); padding-bottom: clamp(0.75rem, 2vw, 1.5rem); }
     .mb-fluid   { margin-bottom: clamp(1rem, 3vw, 3rem); }
     .mb-fluid-sm{ margin-bottom: clamp(0.5rem, 1.5vw, 1.5rem); }
-    .icon-box { width: clamp(2.5rem, 6vw, 3.5rem); height: clamp(2.5rem, 6vw, 3.5rem); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-box-sm { width: clamp(2rem, 5vw, 3rem); height: clamp(2rem, 5vw, 3rem); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .video-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: brightness(0.35) contrast(1.3) saturate(0.7); }
-    .overlay { position: fixed; inset: 0; background: linear-gradient(135deg,rgba(0,0,0,0.75)0%,rgba(15,23,42,0.9)50%,rgba(0,0,0,0.95)100%); z-index: -1; }
-    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
-    .glass-strong { background: rgba(15,23,42,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); }
-    .card-hover { transition: all 0.6s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: visible; }
-    .card-hover::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg,rgba(16,185,129,0.1)0%,transparent 60%); opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+
+    /* ---- ICON SIZE ---- */
+    .icon-box {
+      width: clamp(2.5rem, 6vw, 3.5rem);
+      height: clamp(2.5rem, 6vw, 3.5rem);
+      border-radius: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-box-sm {
+      width: clamp(2rem, 5vw, 3rem);
+      height: clamp(2rem, 5vw, 3rem);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ---- VIDEO / OVERLAY ---- */
+    .video-bg { 
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; z-index: -2; 
+      filter: brightness(0.35) contrast(1.3) saturate(0.7);
+    }
+    .overlay { 
+      position: fixed; inset: 0; 
+      background: linear-gradient(135deg,rgba(0,0,0,0.75)0%,rgba(15,23,42,0.9)50%,rgba(0,0,0,0.95)100%);
+      z-index: -1;
+    }
+
+    /* ---- GLASS ---- */
+    .glass { 
+      background: rgba(255,255,255,0.03); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .glass-strong { 
+      background: rgba(15,23,42,0.6); 
+      backdrop-filter: blur(30px); 
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ---- CARD HOVER ---- */
+    .card-hover { 
+      transition: all 0.6s cubic-bezier(0.4,0,0.2,1); 
+      position: relative;
+      overflow: visible;
+    }
+    .card-hover::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg,rgba(16,185,129,0.1)0%,transparent 60%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
     .card-hover:hover::before { opacity: 1; }
-    .card-hover:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(16,185,129,0.4); box-shadow: 0 25px 50px -12px rgba(16,185,129,0.25); }
-    .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; overflow-x: hidden; padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.5rem); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); -webkit-overflow-scrolling: touch; }
-    .screen-cities-inner { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: clamp(1rem, 3vh, 2.5rem) 0; }
+    .card-hover:hover { 
+      transform: translateY(-8px) scale(1.01); 
+      border-color: rgba(16,185,129,0.4);
+      box-shadow: 0 25px 50px -12px rgba(16,185,129,0.25);
+    }
+
+    /* ---- SCREENS ---- */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      overflow-y: auto; overflow-x: hidden;
+      padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.5rem);
+      transition: all 0.8s cubic-bezier(0.4,0,0.2,1);
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen-cities-inner {
+      min-height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      width: 100%;
+      padding: clamp(1rem, 3vh, 2.5rem) 0;
+    }
     .screen-hidden-left  { opacity:0; transform:translateX(-80px) scale(0.96); pointer-events:none; filter:blur(8px); }
     .screen-hidden-right { opacity:0; transform:translateX(80px)  scale(0.96); pointer-events:none; filter:blur(8px); }
     .screen-active       { opacity:1; transform:translateX(0) scale(1); pointer-events:all; filter:blur(0); }
-    .money-float { position: fixed; opacity: 0; font-size: clamp(1.2rem, 3vw, 2rem); animation: floatMoney 4s ease-in-out infinite; pointer-events: none; z-index: 0; }
-    @keyframes floatMoney { 0%,100% { transform:translateY(0) rotate(0deg); opacity:0; } 10% { opacity:0.3; } 50% { transform:translateY(-80px) rotate(10deg); opacity:0.1; } 90% { opacity:0; } }
+
+    /* ---- MONEY FLOAT ---- */
+    .money-float {
+      position: fixed; opacity: 0;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: floatMoney 4s ease-in-out infinite;
+      pointer-events: none; z-index: 0;
+    }
+    @keyframes floatMoney {
+      0%,100% { transform:translateY(0) rotate(0deg); opacity:0; }
+      10%  { opacity:0.3; }
+      50%  { transform:translateY(-80px) rotate(10deg); opacity:0.1; }
+      90%  { opacity:0; }
+    }
+
+    /* ---- MISC ---- */
     .salary-glow { text-shadow:0 0 30px rgba(16,185,129,0.5),0 0 60px rgba(16,185,129,0.3); }
+
     .btn-shine { position:relative; overflow:hidden; }
-    .btn-shine::after { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1)50%,transparent 70%); transform:rotate(45deg) translateX(-100%); transition:transform 0.6s; }
+    .btn-shine::after {
+      content:''; position:absolute;
+      top:-50%; left:-50%; width:200%; height:200%;
+      background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1)50%,transparent 70%);
+      transform:rotate(45deg) translateX(-100%); transition:transform 0.6s;
+    }
     .btn-shine:hover::after { transform:rotate(45deg) translateX(100%); }
+
     .vacancy-card { transition:all 0.4s ease; }
     .vacancy-card:hover { transform:translateX(5px); border-left-color:#10b981; }
+
     .perk-icon { transition:all 0.3s ease; }
     .perk-item:hover .perk-icon { transform:scale(1.2) rotate(5deg); }
+
     ::-webkit-scrollbar { width:5px; }
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:3px; }
-    .pulse-ring { position:absolute; border:2px solid rgba(16,185,129,0.3); border-radius:50%; animation:pulseRing 2s ease-out infinite; }
-    @keyframes pulseRing { 0% { transform:scale(1); opacity:1; } 100% { transform:scale(1.5); opacity:0; } }
-    .edit-input { background:rgba(0,0,0,0.4); border:1px solid rgba(16,185,129,0.4); border-radius:0.75rem; padding:0.5rem 1rem; color:white; width:100%; transition:all 0.3s; font-size: clamp(0.8rem, 1.5vw, 1rem); }
+
+    .pulse-ring {
+      position:absolute;
+      border:2px solid rgba(16,185,129,0.3);
+      border-radius:50%;
+      animation:pulseRing 2s ease-out infinite;
+    }
+    @keyframes pulseRing {
+      0%   { transform:scale(1); opacity:1; }
+      100% { transform:scale(1.5); opacity:0; }
+    }
+
+    .edit-input {
+      background:rgba(0,0,0,0.4);
+      border:1px solid rgba(16,185,129,0.4);
+      border-radius:0.75rem;
+      padding:0.5rem 1rem;
+      color:white; width:100%;
+      transition:all 0.3s;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+    }
     .edit-input:focus { outline:none; border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,0.2); }
+
     .modal-enter { animation:modalIn 0.3s ease-out; }
     @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+
     .badge-hot { background:linear-gradient(135deg,#ef4444,#f97316); }
+
     .contact-btn { transition:all 0.3s ease; }
     .contact-btn:hover { transform:translateY(-3px); box-shadow:0 10px 30px -10px rgba(16,185,129,0.4); }
     .whatsapp-btn { background:linear-gradient(135deg,#25d366,#128c7e); }
     .whatsapp-btn:hover { background:linear-gradient(135deg,#128c7e,#075e54); }
     .telegram-btn { background:linear-gradient(135deg,#0088cc,#005f99); }
     .telegram-btn:hover { background:linear-gradient(135deg,#005f99,#003d66); }
-    .input-fluid { width:100%; background:rgba(24,24,27,0.8); border:1px solid rgba(63,63,70,1); border-radius:1rem; padding: clamp(0.65rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.5rem); font-size: clamp(0.85rem, 1.5vw, 1rem); color:white; transition:border-color 0.2s; }
+
+    /* ---- INPUT / BUTTON BASE (fluid) ---- */
+    .input-fluid {
+      width:100%;
+      background:rgba(24,24,27,0.8);
+      border:1px solid rgba(63,63,70,1);
+      border-radius:1rem;
+      padding: clamp(0.65rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.5rem);
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      color:white;
+      transition:border-color 0.2s;
+    }
     .input-fluid:focus { outline:none; border-color:#10b981; }
-    .btn-fluid { padding: clamp(0.65rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem); font-size: clamp(0.85rem, 1.5vw, 1.05rem); border-radius:1rem; font-weight:600; transition:all 0.2s; cursor:pointer; min-height: 44px; }
-    .hr-sidebar { position:fixed; left:0; top:0; height:100%; width: clamp(240px, 22vw, 280px); background:rgba(9,9,11,0.97); border-right:1px solid rgba(63,63,70,1); padding: clamp(1rem, 2vw, 1.5rem); z-index:50; display:flex; flex-direction:column; backdrop-filter:blur(20px); transition:transform 0.3s ease; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+
+    .btn-fluid {
+      padding: clamp(0.65rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem);
+      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+      border-radius:1rem;
+      font-weight:600;
+      transition:all 0.2s;
+      cursor:pointer;
+      min-height: 44px;
+    }
+
+    /* ---- HR SIDEBAR ---- */
+    .hr-sidebar {
+      position:fixed; left:0; top:0; height:100%;
+      width: clamp(240px, 22vw, 280px);
+      background:rgba(9,9,11,0.97);
+      border-right:1px solid rgba(63,63,70,1);
+      padding: clamp(1rem, 2vw, 1.5rem);
+      z-index:50; display:flex; flex-direction:column;
+      backdrop-filter:blur(20px);
+      transition:transform 0.3s ease;
+      overflow-y:auto; -webkit-overflow-scrolling:touch;
+    }
     .hr-sidebar.sidebar-hidden { transform:translateX(-100%); }
-    .hr-sidebar-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:40; backdrop-filter:blur(2px); }
-    .hr-main { position:fixed; inset:0; background:rgb(9,9,11); z-index:30; overflow-y:auto; -webkit-overflow-scrolling:touch; transition:margin-left 0.3s ease; }
-    @media (min-width: 768px) { .hr-sidebar { transform:translateX(0) !important; } .hr-main { margin-left: clamp(240px, 22vw, 280px); } .hr-sidebar-overlay { display:none !important; } }
-    @media (max-width: 767px) { .hr-main { margin-left:0 !important; } }
+
+    .hr-sidebar-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.6);
+      z-index:40; backdrop-filter:blur(2px);
+    }
+
+    .hr-main {
+      position:fixed; inset:0;
+      background:rgb(9,9,11);
+      z-index:30; overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      transition:margin-left 0.3s ease;
+    }
+
+    @media (min-width: 768px) {
+      .hr-sidebar { transform:translateX(0) !important; }
+      .hr-main    { margin-left: clamp(240px, 22vw, 280px); }
+      .hr-sidebar-overlay { display:none !important; }
+    }
+    @media (max-width: 767px) {
+      .hr-main { margin-left:0 !important; }
+    }
+
+    /* ---- TAPPABLE ---- */
     .tap-target { min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
-    .cities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); width: 100%; }
-    .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
-    .vac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); }
-    .filters-grid { display: grid; grid-template-columns: 1fr; gap: clamp(0.5rem, 1.5vw, 1rem); }
+
+    /* ---- CITIES GRID ---- */
+    .cities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+      gap: clamp(0.75rem, 2vw, 1.5rem);
+      width: 100%;
+    }
+
+    /* ---- PERKS GRID ---- */
+    .perks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    /* ---- STATS GRID ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    /* ---- VAC MGMT GRID ---- */
+    .vac-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: clamp(0.75rem, 2vw, 1.5rem);
+    }
+
+    /* ---- FILTERS GRID ---- */
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
     @media (min-width: 480px) { .filters-grid { grid-template-columns: 1fr 1fr; } }
     @media (min-width: 900px) { .filters-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
-    .loading-spinner { border: 3px solid rgba(255,255,255,0.1); border-top-color: #10b981; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .toast { position: fixed; bottom: 2rem; right: 2rem; z-index: 100; padding: 1rem 1.5rem; border-radius: 1rem; font-weight: 500; animation: toastIn 0.3s ease-out; max-width: 400px; }
-    .toast-success { background: rgba(16,185,129,0.2); border: 1px solid rgba(16,185,129,0.4); color: #34d399; }
-    .toast-error   { background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.4); color: #f87171; }
-    @keyframes toastIn { from { opacity:0; transform: translateY(20px); } to { opacity:1; transform: translateY(0); } }
+
   </style>
-<base target="_blank">
 </head>
 <body class="bg-zinc-950 text-zinc-100" x-data="app()" x-init="init()">
-
-<!-- LOADING OVERLAY -->
-<div x-show="loading" class="fixed inset-0 bg-black/80 flex items-center justify-center z-[100]" x-transition>
-  <div class="flex flex-col items-center gap-4">
-    <div class="loading-spinner"></div>
-    <p class="text-zinc-400 fs-sm" x-text="loadingText">Загрузка...</p>
-  </div>
-</div>
-
-<!-- TOAST -->
-<div x-show="toast.show" class="toast" :class="toast.type === 'success' ? 'toast-success' : 'toast-error'" x-transition>
-  <span x-text="toast.message"></span>
-</div>
 
 <!-- BACKGROUND VIDEO -->
 <video autoplay muted loop playsinline class="video-bg">
@@ -126,6 +318,7 @@
 <!-- ==================== SCREEN 1: CITIES ==================== -->
 <div class="screen" :class="screen === 'cities' ? 'screen-active' : 'screen-hidden-left'">
   <div class="screen-cities-inner max-w-6xl mx-auto">
+
     <div class="text-center mb-fluid relative z-10">
       <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-2 mb-fluid-sm">
         <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
@@ -137,7 +330,10 @@
       </h1>
       <p class="fs-h4 text-zinc-400 font-light">Выберите город мечты</p>
     </div>
+
     <div class="cities-grid relative z-10">
+      
+      <!-- Medellin -->
       <button @click="selectCity('Медельин')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
           <div class="icon-box bg-gradient-to-br from-emerald-500 to-emerald-700" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
@@ -153,6 +349,8 @@
           <span class="text-emerald-400 fs-sm font-medium">от $1,200</span>
         </div>
       </button>
+
+      <!-- Dominican -->
       <button @click="selectCity('Доминикана')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
           <div class="icon-box bg-gradient-to-br from-cyan-500 to-blue-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
@@ -168,6 +366,8 @@
           <span class="text-emerald-400 fs-sm font-medium">от $1,200</span>
         </div>
       </button>
+
+      <!-- Bar -->
       <button @click="selectCity('Бар')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
           <div class="icon-box bg-gradient-to-br from-amber-500 to-orange-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
@@ -184,17 +384,20 @@
         </div>
       </button>
     </div>
+
     <div class="mt-fluid text-center relative z-10">
       <button @click="showLogin = true" class="text-zinc-500 hover:text-zinc-300 transition-colors flex items-center gap-2 mx-auto tap-target px-4">
         <i class="fa-solid fa-lock fs-sm"></i>
         <span class="fs-sm">Вход для HR</span>
       </button>
     </div>
+
   </div>
 </div>
 
 <!-- ==================== SCREEN 2: VACANCIES ==================== -->
 <div class="screen" :class="screen === 'vacancies' ? 'screen-active' : (screen === 'cities' ? 'screen-hidden-right' : 'screen-hidden-left')">
+  
   <div class="w-full max-w-5xl relative z-10 pt-2 pb-8">
     <div class="flex items-center justify-between mb-fluid">
       <button @click="backToCities()" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group tap-target">
@@ -208,16 +411,22 @@
         <p class="fs-h4 font-bold text-emerald-400" x-text="selectedCity"></p>
       </div>
     </div>
+
     <h2 class="fs-h2 font-bold mb-1">Доступные позиции</h2>
     <p class="text-zinc-400 fs-body mb-fluid">Выберите должность для просмотра условий</p>
+
     <div style="display:flex;flex-direction:column;gap:clamp(0.5rem,1.5vw,1rem);">
       <template x-for="(vac, i) in getVacanciesByCity()" :key="vac.id || i">
-        <div @click="selectVacancy(vac)" class="glass-strong rounded-xl cursor-pointer vacancy-card border-l-4 border-transparent hover:bg-white/5 group" style="padding:clamp(0.85rem,2.5vw,2rem);">
+        <div @click="selectVacancy(vac)" 
+             class="glass-strong rounded-xl cursor-pointer vacancy-card border-l-4 border-transparent hover:bg-white/5 group"
+             style="padding:clamp(0.85rem,2.5vw,2rem);">
           <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0 pr-3">
               <div class="flex flex-wrap items-center gap-2 mb-1">
                 <h3 class="fs-h4 font-bold truncate" x-text="vac.title"></h3>
-                <span class="badge-hot text-white px-2 py-1 rounded-full fs-sm font-medium whitespace-nowrap"><i class="fa-solid fa-fire mr-1"></i> Hot</span>
+                <span class="badge-hot text-white px-2 py-1 rounded-full fs-sm font-medium whitespace-nowrap">
+                  <i class="fa-solid fa-fire mr-1"></i> Hot
+                </span>
               </div>
               <p class="text-emerald-400 fs-salary font-bold salary-glow" x-text="vac.salary"></p>
               <p class="text-zinc-500 mt-1 fs-sm" x-text="vac.description || 'Forex Call Center — работа с иностранными клиентами'"></p>
@@ -240,8 +449,11 @@
 
 <!-- ==================== SCREEN 3: JOB DETAILS + APPLY ==================== -->
 <div class="screen" :class="screen === 'details' ? 'screen-active' : 'screen-hidden-right'">
+  
   <div class="w-full max-w-4xl relative z-10 pt-2 pb-10">
-    <div class="flex items-center justify-between sticky top-0 bg-zinc-950/80 backdrop-blur-xl border border-white/5 z-20 rounded-xl mb-fluid" style="padding:clamp(0.6rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+    <!-- Sticky header -->
+    <div class="flex items-center justify-between sticky top-0 bg-zinc-950/80 backdrop-blur-xl border border-white/5 z-20 rounded-xl mb-fluid"
+         style="padding:clamp(0.6rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
       <button @click="backToVacancies()" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group tap-target">
         <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all shrink-0">
           <i class="fa-solid fa-arrow-left"></i>
@@ -253,6 +465,8 @@
         <p class="fs-body font-bold text-emerald-400 truncate" style="max-width:clamp(120px,30vw,300px);" x-text="selectedVacancy?.title"></p>
       </div>
     </div>
+
+    <!-- Vacancy info card -->
     <div class="glass-strong rounded-2xl p-fluid mb-fluid border border-emerald-500/20 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
       <div class="relative z-10">
@@ -269,26 +483,43 @@
             </div>
           </div>
         </div>
+
         <div class="perks-grid mb-fluid">
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-plane fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Переезд за счёт компании</p><p class="fs-sm text-zinc-400">Билет + багаж</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Переезд за счёт компании</p>
+              <p class="fs-sm text-zinc-400">Билет + багаж</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-house fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Жильё предоставляется</p><p class="fs-sm text-zinc-400">Комфортные апартаменты</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Жильё предоставляется</p>
+              <p class="fs-sm text-zinc-400">Комфортные апартаменты</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-graduation-cap fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Обучение с нуля</p><p class="fs-sm text-zinc-400">Платное обучение + менторство</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Обучение с нуля</p>
+              <p class="fs-sm text-zinc-400">Платное обучение + менторство</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-chart-line fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Рост до Тимлида</p><p class="fs-sm text-zinc-400">2-3 месяца при хороших показателях</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Рост до Тимлида</p>
+              <p class="fs-sm text-zinc-400">2-3 месяца при хороших показателях</p>
+            </div>
           </div>
         </div>
+
         <div class="bg-white/5 rounded-2xl border-l-4 border-emerald-500" style="padding:clamp(0.75rem,2.5vw,1.5rem);">
-          <h4 class="font-bold fs-body mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info text-emerald-400"></i>Что нужно знать</h4>
+          <h4 class="font-bold fs-body mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-400"></i>
+            Что нужно знать
+          </h4>
           <ul class="text-zinc-300 fs-sm" style="display:flex;flex-direction:column;gap:clamp(0.35rem,1vw,0.6rem);">
             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0"></i><span>Работа в колл-центре с иностранными клиентами (Forex/Trading)</span></li>
             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0"></i><span>График 5/2, 8 часов с перерывом</span></li>
@@ -298,9 +529,12 @@
         </div>
       </div>
     </div>
+
+    <!-- Application Form -->
     <div class="glass-strong rounded-2xl p-fluid border border-white/10">
       <h3 class="fs-h3 font-bold mb-1">Откликнуться на вакансию</h3>
       <p class="text-zinc-400 mb-fluid fs-sm">Заполните анкету — мы свяжемся с вами в течение 24 часов</p>
+
       <div class="mb-fluid">
         <div class="flex justify-between fs-sm text-zinc-400 mb-2">
           <span>Шаг <span x-text="currentStep"></span> из <span x-text="totalSteps"></span></span>
@@ -310,10 +544,18 @@
           <div class="h-full bg-gradient-to-r from-emerald-400 to-cyan-400 transition-all duration-700 rounded-full" :style="{width: progress + '%'}"></div>
         </div>
       </div>
+
       <div x-show="currentStep === 1" style="display:flex;flex-direction:column;gap:clamp(0.75rem,2vw,1.25rem);">
-        <div><label class="block fs-sm text-zinc-400 mb-2">ФИО</label><input x-model="form.name" placeholder="Иванов Иван Иванович" class="input-fluid"></div>
-        <div><label class="block fs-sm text-zinc-400 mb-2">WhatsApp / Telegram</label><input x-model="form.phone" placeholder="+7 (999) 000-00-00" class="input-fluid"></div>
+        <div>
+          <label class="block fs-sm text-zinc-400 mb-2">ФИО</label>
+          <input x-model="form.name" placeholder="Иванов Иван Иванович" class="input-fluid">
+        </div>
+        <div>
+          <label class="block fs-sm text-zinc-400 mb-2">WhatsApp / Telegram</label>
+          <input x-model="form.phone" placeholder="+7 (999) 000-00-00" class="input-fluid">
+        </div>
       </div>
+
       <template x-for="(q, idx) in questions" :key="idx">
         <div x-show="currentStep === idx + 2" style="display:flex;flex-direction:column;gap:clamp(0.5rem,1.5vw,1rem);">
           <h4 class="fs-h4 font-semibold" x-text="q.text"></h4>
@@ -321,36 +563,60 @@
           <input x-model="form[q.key]" :placeholder="q.placeholder" class="input-fluid">
         </div>
       </template>
+
+      <!-- FINAL STEP -->
       <div x-show="currentStep === totalSteps" class="text-center py-6">
-        <div class="bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-fluid relative" style="width:clamp(4rem,12vw,6rem);height:clamp(4rem,12vw,6rem);">
+        <div class="bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-fluid relative"
+             style="width:clamp(4rem,12vw,6rem);height:clamp(4rem,12vw,6rem);">
           <div class="pulse-ring absolute inset-0 rounded-full"></div>
           <i class="fa-solid fa-check text-emerald-400" style="font-size:clamp(1.5rem,5vw,2.5rem);"></i>
         </div>
         <h3 class="fs-h2 font-bold text-emerald-400 mb-3">Анкета отправлена!</h3>
         <p class="fs-body text-zinc-300 mb-2">Мы свяжемся с вами в ближайшее время</p>
+        
         <div x-show="assignedHR" class="mt-fluid mb-fluid">
           <p class="text-zinc-400 mb-4 fs-sm">Ваш HR-менеджер: <span class="text-emerald-400 font-bold" x-text="assignedHR"></span></p>
           <div style="display:flex;flex-direction:column;gap:clamp(0.5rem,2vw,1rem);max-width:28rem;margin:0 auto;">
-            <a :href="whatsappLink" target="_blank" x-show="hrWhatsApp" class="contact-btn whatsapp-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3" style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
+            <a :href="whatsappLink" target="_blank" x-show="hrWhatsApp" 
+               class="contact-btn whatsapp-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3"
+               style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
               <i class="fa-brands fa-whatsapp" style="font-size:clamp(1.2rem,3vw,1.5rem);"></i>
-              <div class="text-left"><div class="fs-sm opacity-80">Написать в</div><div class="fs-body font-semibold">WhatsApp</div></div>
+              <div class="text-left">
+                <div class="fs-sm opacity-80">Написать в</div>
+                <div class="fs-body font-semibold">WhatsApp</div>
+              </div>
             </a>
-            <a :href="telegramLink" target="_blank" x-show="hrTelegram" class="contact-btn telegram-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3" style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
+            <a :href="telegramLink" target="_blank" x-show="hrTelegram" 
+               class="contact-btn telegram-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3"
+               style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
               <i class="fa-brands fa-telegram" style="font-size:clamp(1.2rem,3vw,1.5rem);"></i>
-              <div class="text-left"><div class="fs-sm opacity-80">Написать в</div><div class="fs-body font-semibold">Telegram</div></div>
+              <div class="text-left">
+                <div class="fs-sm opacity-80">Написать в</div>
+                <div class="fs-body font-semibold">Telegram</div>
+              </div>
             </a>
           </div>
           <p x-show="!hrWhatsApp && !hrTelegram" class="text-zinc-500 mt-3 fs-sm">HR пока не указал контакты для связи</p>
         </div>
+
         <div x-show="!assignedHR" class="mt-fluid mb-fluid">
           <p class="text-zinc-400 fs-sm">Общая заявка отправлена. Мы свяжемся с вами.</p>
         </div>
-        <button @click="resetAll()" class="btn-fluid bg-zinc-800 hover:bg-zinc-700 transition-colors">Вернуться на главную</button>
+
+        <button @click="resetAll()" class="btn-fluid bg-zinc-800 hover:bg-zinc-700 transition-colors">
+          Вернуться на главную
+        </button>
       </div>
+
       <div class="flex justify-between mt-fluid" x-show="currentStep < totalSteps">
-        <button @click="prevStep" x-show="currentStep > 1" class="btn-fluid border border-zinc-700 hover:bg-zinc-800 transition-all">Назад</button>
-        <button @click="nextStep" class="btn-shine btn-fluid bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 font-semibold shadow-lg shadow-emerald-900/30 ml-auto flex items-center gap-2">
-          <span x-text="currentStep === totalSteps - 1 ? 'Отправить анкету' : 'Далее'"></span><i class="fa-solid fa-arrow-right"></i>
+        <button @click="prevStep" x-show="currentStep > 1" 
+                class="btn-fluid border border-zinc-700 hover:bg-zinc-800 transition-all">
+          Назад
+        </button>
+        <button @click="nextStep" 
+                class="btn-shine btn-fluid bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 font-semibold shadow-lg shadow-emerald-900/30 ml-auto flex items-center gap-2">
+          <span x-text="currentStep === totalSteps - 1 ? 'Отправить анкету' : 'Далее'"></span>
+          <i class="fa-solid fa-arrow-right"></i>
         </button>
       </div>
     </div>
@@ -358,89 +624,174 @@
 </div>
 
 <!-- ==================== HR LOGIN MODAL ==================== -->
-<div x-show="showLogin" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="fixed inset-0 bg-black/90 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
+<div x-show="showLogin" 
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 scale-95"
+     x-transition:enter-end="opacity-100 scale-100"
+     class="fixed inset-0 bg-black/90 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
   <div class="glass-strong border border-zinc-700 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md mx-0 sm:mx-4 relative modal-enter p-fluid">
     <button @click="showLogin = false" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors tap-target">&times;</button>
     <h2 class="fs-h2 font-bold mb-fluid text-center bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">HR Вход</h2>
     <input x-model="loginUser" placeholder="Имя (например: nik)" class="input-fluid" style="margin-bottom:clamp(0.75rem,2vw,1.25rem);">
     <input x-model="loginPass" type="password" placeholder="Пароль" class="input-fluid" style="margin-bottom:clamp(1rem,3vw,2rem);">
-    <button @click="login()" class="w-full btn-fluid bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-900/50">Войти</button>
+    <button @click="login()" 
+            class="w-full btn-fluid bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-900/50">
+      Войти
+    </button>
     <p class="text-center text-zinc-500 mt-4 fs-sm">Демо: nik / 1234</p>
   </div>
 </div>
 
 <!-- ==================== HR SIDEBAR OVERLAY (mobile) ==================== -->
-<div x-show="isHR && sidebarOpen" @click="sidebarOpen = false" class="hr-sidebar-overlay md:hidden" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+<div x-show="isHR && sidebarOpen" 
+     @click="sidebarOpen = false"
+     class="hr-sidebar-overlay md:hidden"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0">
+</div>
 
 <!-- ==================== HR SIDEBAR ==================== -->
-<div x-show="isHR" class="hr-sidebar" :class="{ 'sidebar-hidden': !sidebarOpen }" x-cloak>
+<div x-show="isHR" 
+     class="hr-sidebar"
+     :class="{ 'sidebar-hidden': !sidebarOpen }"
+     x-cloak>
+
   <div class="mb-8">
+    <!-- Mobile close button -->
     <div class="flex items-center justify-between mb-4 md:mb-0">
-      <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-chart-line text-emerald-400"></i>Forex HR</h1>
-      <button @click="sidebarOpen = false" class="md:hidden text-zinc-400 hover:text-white tap-target"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+        <i class="fa-solid fa-chart-line text-emerald-400"></i>
+        Forex HR
+      </h1>
+      <button @click="sidebarOpen = false" class="md:hidden text-zinc-400 hover:text-white tap-target">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
     </div>
     <p class="text-emerald-400 font-medium" x-text="currentUser"></p>
     <span class="text-xs text-zinc-500 bg-zinc-800 px-3 py-1 rounded-full mt-2 inline-block">HR Manager</span>
   </div>
+  
   <nav class="space-y-2 flex-1">
-    <button @click="hrTab = 'dashboard'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'dashboard' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'dashboard'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'dashboard' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-users w-5"></i> Кандидаты
-      <span x-show="applications.length > 0" x-text="applications.length" class="ml-auto bg-emerald-600 text-white text-xs px-2 py-1 rounded-full"></span>
+      <span x-show="applications.length > 0" x-text="applications.length" 
+            class="ml-auto bg-emerald-600 text-white text-xs px-2 py-1 rounded-full"></span>
     </button>
-    <button @click="hrTab = 'vacancies'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'vacancies' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'vacancies'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'vacancies' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-briefcase w-5"></i> Вакансии
     </button>
-    <button @click="hrTab = 'settings'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'settings' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'settings'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'settings' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-gear w-5"></i> Настройки
     </button>
   </nav>
+
   <div class="mt-auto space-y-4 pt-4">
     <div class="bg-zinc-800/50 rounded-2xl p-4">
       <p class="text-zinc-400 text-xs mb-2 uppercase tracking-wider font-semibold">Ваша ссылка</p>
       <div class="bg-zinc-900 rounded-xl p-3 font-mono text-xs break-all text-emerald-400 border border-zinc-700" x-text="personalLink"></div>
-      <button @click="copyLink()" class="mt-2 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"><i class="fa-regular fa-copy"></i> Копировать</button>
+      <button @click="copyLink()" class="mt-2 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
+        <i class="fa-regular fa-copy"></i> Копировать
+      </button>
     </div>
-    <button @click="logout()" class="w-full text-red-400 hover:text-red-300 py-3 rounded-2xl flex items-center gap-3 transition-colors tap-target"><i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти</button>
+    <button @click="logout()" class="w-full text-red-400 hover:text-red-300 py-3 rounded-2xl flex items-center gap-3 transition-colors tap-target">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти
+    </button>
   </div>
 </div>
 
 <!-- ==================== HR DASHBOARD ==================== -->
 <div x-show="isHR" class="hr-main" x-cloak>
-  <div class="md:hidden flex items-center justify-between border-b border-zinc-800 sticky top-0 bg-zinc-950/95 backdrop-blur-xl z-20" style="padding:clamp(0.75rem,2vw,1rem) clamp(0.75rem,3vw,1.25rem);">
-    <button @click="sidebarOpen = true" class="tap-target text-zinc-300 hover:text-white"><i class="fa-solid fa-bars" style="font-size:clamp(1rem,3vw,1.25rem);"></i></button>
-    <span class="font-semibold fs-body"><span x-show="hrTab === 'dashboard'">Кандидаты</span><span x-show="hrTab === 'vacancies'">Вакансии</span><span x-show="hrTab === 'settings'">Настройки</span></span>
+
+  <!-- Mobile top bar -->
+  <div class="md:hidden flex items-center justify-between border-b border-zinc-800 sticky top-0 bg-zinc-950/95 backdrop-blur-xl z-20"
+       style="padding:clamp(0.75rem,2vw,1rem) clamp(0.75rem,3vw,1.25rem);">
+    <button @click="sidebarOpen = true" class="tap-target text-zinc-300 hover:text-white">
+      <i class="fa-solid fa-bars" style="font-size:clamp(1rem,3vw,1.25rem);"></i>
+    </button>
+    <span class="font-semibold fs-body">
+      <span x-show="hrTab === 'dashboard'">Кандидаты</span>
+      <span x-show="hrTab === 'vacancies'">Вакансии</span>
+      <span x-show="hrTab === 'settings'">Настройки</span>
+    </span>
     <span class="text-emerald-400 fs-sm font-medium" x-text="currentUser"></span>
   </div>
+
   <div class="p-fluid max-w-7xl mx-auto">
+
     <!-- ====== CANDIDATES TAB ====== -->
     <div x-show="hrTab === 'dashboard'">
       <h2 class="text-2xl md:text-4xl font-bold mb-6 md:mb-8 hidden md:block">Мои кандидаты</h2>
+      
+      <!-- Stats grid -->
       <div class="stats-grid mb-fluid">
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Всего</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="applications.length"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">За неделю</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="recentApplications"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Конверсии</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Конверсии')"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Удержание</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Удержания')"></p></div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Всего</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="applications.length"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">За неделю</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="recentApplications"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Конверсии</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Конверсии')"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Удержание</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Удержания')"></p>
+        </div>
       </div>
+
+      <!-- Filters -->
       <div class="filters-grid mb-fluid">
         <div class="relative" style="grid-column: 1 / -1;">
           <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 fs-sm"></i>
-          <input x-model="search" placeholder="Поиск по имени..." class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none transition-colors fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem) clamp(0.65rem,2vw,1rem) 2.5rem;">
+          <input x-model="search" placeholder="Поиск по имени..." 
+                 class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none transition-colors fs-sm"
+                 style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem) clamp(0.65rem,2vw,1rem) 2.5rem;">
         </div>
-        <select x-model="filterCity" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
-          <option value="">Все города</option><option value="Медельин">Медельин</option><option value="Доминикана">Доминикана</option><option value="Бар">Бар</option>
+        <select x-model="filterCity" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+          <option value="">Все города</option>
+          <option value="Медельин">Медельин</option>
+          <option value="Доминикана">Доминикана</option>
+          <option value="Бар">Бар</option>
         </select>
-        <select x-model="filterVacancy" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+        <select x-model="filterVacancy" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
           <option value="">Все должности</option>
-          <template x-for="vac in allVacancyTitles" :key="vac"><option :value="vac" x-text="vac"></option></template>
+          <template x-for="vac in allVacancyTitles" :key="vac">
+            <option :value="vac" x-text="vac"></option>
+          </template>
         </select>
-        <button @click="exportData()" class="bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-colors flex items-center justify-center gap-2 fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);"><i class="fa-solid fa-download"></i> Экспорт CSV</button>
+        <button @click="exportData()" class="bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-colors flex items-center justify-center gap-2 fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+          <i class="fa-solid fa-download"></i> Экспорт CSV
+        </button>
       </div>
-      <!-- Desktop Table -->
+
+      <!-- Table (desktop) / Cards (mobile) -->
       <div class="hidden md:block glass rounded-3xl overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="bg-zinc-900/80">
-              <tr><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">ФИО</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Контакт</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Город</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Вакансия</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Языки</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Опыт</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Дата</th><th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Связь</th></tr>
+              <tr>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">ФИО</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Контакт</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Город</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Вакансия</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Языки</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Опыт</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Дата</th>
+                <th class="p-5 text-left text-xs font-semibold text-zinc-400 uppercase">Связь</th>
+              </tr>
             </thead>
             <tbody>
               <template x-for="app in filteredApps" :key="app.id">
@@ -454,23 +805,38 @@
                   <td class="p-5 text-zinc-500 text-xs" x-text="formatDate(app.date)"></td>
                   <td class="p-5">
                     <div class="flex gap-2">
-                      <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="hrContacts.whatsapp" class="w-9 h-9 rounded-lg bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center transition-colors tap-target" title="WhatsApp"><i class="fa-brands fa-whatsapp text-white text-sm"></i></a>
-                      <a :href="generateAppTelegramLink(app)" target="_blank" x-show="hrContacts.telegram" class="w-9 h-9 rounded-lg bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center transition-colors tap-target" title="Telegram"><i class="fa-brands fa-telegram text-white text-sm"></i></a>
+                      <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')" 
+                         class="w-9 h-9 rounded-lg bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center transition-colors tap-target" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-white text-sm"></i>
+                      </a>
+                      <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')" 
+                         class="w-9 h-9 rounded-lg bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center transition-colors tap-target" title="Telegram">
+                        <i class="fa-brands fa-telegram text-white text-sm"></i>
+                      </a>
                     </div>
                   </td>
                 </tr>
               </template>
-              <tr x-show="filteredApps.length === 0"><td colspan="8" class="p-12 text-center text-zinc-500"><i class="fa-solid fa-inbox text-4xl mb-4 block"></i>Нет заявок по выбранным фильтрам</td></tr>
+              <tr x-show="filteredApps.length === 0">
+                <td colspan="8" class="p-12 text-center text-zinc-500">
+                  <i class="fa-solid fa-inbox text-4xl mb-4 block"></i>
+                  Нет заявок по выбранным фильтрам
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
-      <!-- Mobile Cards -->
+
+      <!-- Mobile candidate cards -->
       <div class="md:hidden space-y-3">
         <template x-for="app in filteredApps" :key="app.id">
           <div class="glass rounded-2xl p-4 border border-zinc-700/50">
             <div class="flex items-start justify-between mb-3">
-              <div><p class="font-semibold" x-text="app.name"></p><p class="text-emerald-400 text-sm" x-text="app.phone"></p></div>
+              <div>
+                <p class="font-semibold" x-text="app.name"></p>
+                <p class="text-emerald-400 text-sm" x-text="app.phone"></p>
+              </div>
               <span class="bg-zinc-800 px-2 py-1 rounded-full text-xs text-zinc-300" x-text="formatDate(app.date)"></span>
             </div>
             <div class="flex flex-wrap gap-2 mb-3">
@@ -482,12 +848,21 @@
               <p x-show="app.experience"><span class="text-zinc-500">Опыт:</span> <span x-text="app.experience"></span></p>
             </div>
             <div class="flex gap-2">
-              <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="hrContacts.whatsapp" class="flex-1 py-2 rounded-xl bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center gap-2 text-white text-sm transition-colors"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-              <a :href="generateAppTelegramLink(app)" target="_blank" x-show="hrContacts.telegram" class="flex-1 py-2 rounded-xl bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center gap-2 text-white text-sm transition-colors"><i class="fa-brands fa-telegram"></i> Telegram</a>
+              <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')"
+                 class="flex-1 py-2 rounded-xl bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center gap-2 text-white text-sm transition-colors">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </a>
+              <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')"
+                 class="flex-1 py-2 rounded-xl bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center gap-2 text-white text-sm transition-colors">
+                <i class="fa-brands fa-telegram"></i> Telegram
+              </a>
             </div>
           </div>
         </template>
-        <div x-show="filteredApps.length === 0" class="text-center text-zinc-500 py-12"><i class="fa-solid fa-inbox text-4xl mb-4 block"></i>Нет заявок по выбранным фильтрам</div>
+        <div x-show="filteredApps.length === 0" class="text-center text-zinc-500 py-12">
+          <i class="fa-solid fa-inbox text-4xl mb-4 block"></i>
+          Нет заявок по выбранным фильтрам
+        </div>
       </div>
     </div>
 
@@ -495,33 +870,48 @@
     <div x-show="hrTab === 'vacancies'">
       <div class="flex justify-between items-center mb-6 md:mb-8">
         <h2 class="text-2xl md:text-4xl font-bold">Вакансии</h2>
-        <button @click="showAddVacancy = true" class="px-4 md:px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors flex items-center gap-2 text-sm md:text-base tap-target"><i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить</span></button>
+        <button @click="showAddVacancy = true" class="px-4 md:px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors flex items-center gap-2 text-sm md:text-base tap-target">
+          <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить</span>
+        </button>
       </div>
+
       <div class="vac-grid">
         <template x-for="(vac, i) in editableVacancies" :key="vac.id || i">
           <div class="glass rounded-2xl md:rounded-3xl p-5 md:p-6 border border-zinc-700/50 hover:border-emerald-500/30 transition-all">
             <div class="flex justify-between items-start mb-4">
               <span class="text-xs text-zinc-500 uppercase tracking-wider" x-text="vac.city"></span>
               <div class="flex gap-2">
-                <button @click="editVacancy(vac)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-emerald-600 flex items-center justify-center transition-colors tap-target"><i class="fa-solid fa-pen text-xs"></i></button>
-                <button @click="deleteVacancy(vac.id)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-red-600 flex items-center justify-center transition-colors tap-target"><i class="fa-solid fa-trash text-xs"></i></button>
+                <button @click="editVacancy(vac)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-emerald-600 flex items-center justify-center transition-colors tap-target">
+                  <i class="fa-solid fa-pen text-xs"></i>
+                </button>
+                <button @click="deleteVacancy(vac.id)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-red-600 flex items-center justify-center transition-colors tap-target">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
               </div>
             </div>
+            
             <div x-show="!vac.isEditing">
               <h3 class="text-lg md:text-xl font-bold mb-2" x-text="vac.title"></h3>
               <p class="text-emerald-400 text-base md:text-lg font-bold mb-3" x-text="vac.salary"></p>
               <p class="text-zinc-400 text-sm" x-text="vac.description || 'Описание не указано'"></p>
             </div>
+
             <div x-show="vac.isEditing" class="space-y-3">
               <input x-model="vac.editTitle" class="edit-input" placeholder="Должность">
               <input x-model="vac.editSalary" class="edit-input" placeholder="Зарплата">
               <input x-model="vac.editDescription" class="edit-input" placeholder="Описание">
               <select x-model="vac.editCity" class="edit-input">
-                <option value="Медельин">Медельин</option><option value="Доминикана">Доминикана</option><option value="Бар">Бар</option>
+                <option value="Медельин">Медельин</option>
+                <option value="Доминикана">Доминикана</option>
+                <option value="Бар">Бар</option>
               </select>
               <div class="flex gap-2 mt-4">
-                <button @click="saveVacancyEdit(vac)" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-sm transition-colors"><i class="fa-solid fa-check mr-1"></i> Сохранить</button>
-                <button @click="cancelVacancyEdit(vac)" class="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm transition-colors">Отмена</button>
+                <button @click="saveVacancyEdit(vac)" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-sm transition-colors">
+                  <i class="fa-solid fa-check mr-1"></i> Сохранить
+                </button>
+                <button @click="cancelVacancyEdit(vac)" class="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm transition-colors">
+                  Отмена
+                </button>
               </div>
             </div>
           </div>
@@ -532,111 +922,191 @@
     <!-- ====== SETTINGS TAB ====== -->
     <div x-show="hrTab === 'settings'">
       <h2 class="text-2xl md:text-4xl font-bold mb-6 md:mb-8 hidden md:block">Настройки профиля</h2>
+      
       <div class="glass rounded-2xl md:rounded-3xl p-6 md:p-10 max-w-2xl border border-zinc-700/50 mb-6 md:mb-8">
         <div class="flex items-center gap-4 mb-6 md:mb-8 pb-6 md:pb-8 border-b border-zinc-800">
-          <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0"><span x-text="currentUser?.[0]?.toUpperCase()"></span></div>
-          <div><h3 class="text-xl md:text-2xl font-bold" x-text="currentUser"></h3><p class="text-zinc-400">HR Manager</p></div>
+          <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0">
+            <span x-text="currentUser?.[0]?.toUpperCase()"></span>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-bold" x-text="currentUser"></h3>
+            <p class="text-zinc-400">HR Manager</p>
+          </div>
         </div>
+
         <div class="space-y-5">
-          <div><label class="block text-sm text-zinc-400 mb-2">Новый пароль</label><input x-model="newPass" type="password" placeholder="Минимум 4 символа" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base"></div>
-          <div><label class="block text-sm text-zinc-400 mb-2">Подтвердите пароль</label><input x-model="confirmPass" type="password" placeholder="Повторите пароль" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base"></div>
-          <button @click="updateCredentials()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base"><i class="fa-solid fa-shield-halved mr-2"></i> Обновить пароль</button>
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Новый логин</label>
+            <input x-model="newLogin" placeholder="Новое имя пользователя" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Новый пароль</label>
+            <input x-model="newPass" type="password" placeholder="Минимум 4 символа" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Подтвердите пароль</label>
+            <input x-model="confirmPass" type="password" placeholder="Повторите пароль" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          
+          <button @click="updateCredentials()" 
+                  class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base">
+            <i class="fa-solid fa-shield-halved mr-2"></i> Обновить данные входа
+          </button>
         </div>
       </div>
+
+      <!-- CONTACTS SETTINGS -->
       <div class="glass rounded-2xl md:rounded-3xl p-6 md:p-10 max-w-2xl border border-zinc-700/50">
-        <h3 class="text-xl md:text-2xl font-bold mb-5 md:mb-6 flex items-center gap-3"><i class="fa-solid fa-address-card text-emerald-400"></i>Контакты для кандидатов</h3>
+        <h3 class="text-xl md:text-2xl font-bold mb-5 md:mb-6 flex items-center gap-3">
+          <i class="fa-solid fa-address-card text-emerald-400"></i>
+          Контакты для кандидатов
+        </h3>
         <p class="text-zinc-400 mb-5 text-sm">Эти контакты будут показаны кандидатам после отправки анкеты. Укажите номер в международном формате без + и пробелов.</p>
+        
         <div class="space-y-5">
           <div>
             <label class="block text-sm text-zinc-400 mb-2">WhatsApp номер</label>
-            <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">+</span><input x-model="hrContacts.whatsapp" placeholder="79990000000" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base"></div>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">+</span>
+              <input x-model="hrContacts.whatsapp" placeholder="79990000000" 
+                     class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+            </div>
             <p class="text-zinc-500 text-xs mt-2">Пример: 79990000000 (без + и пробелов)</p>
           </div>
+          
           <div>
             <label class="block text-sm text-zinc-400 mb-2">Telegram username</label>
-            <div class="relative"><span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">@</span><input x-model="hrContacts.telegram" placeholder="username" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base"></div>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">@</span>
+              <input x-model="hrContacts.telegram" placeholder="username" 
+                     class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+            </div>
             <p class="text-zinc-500 text-xs mt-2">Пример: username (без @)</p>
           </div>
-          <button @click="saveContacts()" class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base"><i class="fa-solid fa-floppy-disk mr-2"></i> Сохранить контакты</button>
+          
+          <button @click="saveContacts()" 
+                  class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base">
+            <i class="fa-solid fa-floppy-disk mr-2"></i> Сохранить контакты
+          </button>
         </div>
+
         <div class="mt-5 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
-          <p class="text-emerald-400 text-sm flex items-center gap-2"><i class="fa-solid fa-circle-info"></i>Кандидаты увидят кнопки связи после отправки анкеты</p>
+          <p class="text-emerald-400 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-info"></i>
+            Кандидаты увидят кнопки связи после отправки анкеты
+          </p>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
 <!-- ADD VACANCY MODAL -->
-<div x-show="showAddVacancy" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" class="fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
+<div x-show="showAddVacancy" 
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     class="fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
   <div class="glass-strong border border-zinc-700 rounded-t-3xl sm:rounded-3xl p-7 md:p-10 w-full sm:max-w-lg mx-0 sm:mx-4 modal-enter max-h-[90vh] overflow-y-auto">
     <h3 class="text-2xl md:text-3xl font-bold mb-5 md:mb-6">Новая вакансия</h3>
     <div class="space-y-4">
-      <div><label class="block text-sm text-zinc-400 mb-2">Город</label><select x-model="newVacancy.city" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base"><option value="Медельин">Медельин</option><option value="Доминикана">Доминикана</option><option value="Бар">Бар</option></select></div>
-      <div><label class="block text-sm text-zinc-400 mb-2">Должность</label><input x-model="newVacancy.title" placeholder="Например: Супервайзер" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base"></div>
-      <div><label class="block text-sm text-zinc-400 mb-2">Зарплата</label><input x-model="newVacancy.salary" placeholder="Например: $5000 – $8000 / мес" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base"></div>
-      <div><label class="block text-sm text-zinc-400 mb-2">Описание</label><textarea x-model="newVacancy.description" placeholder="Краткое описание вакансии..." rows="3" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none resize-none text-base"></textarea></div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Город</label>
+        <select x-model="newVacancy.city" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+          <option value="Медельин">Медельин</option>
+          <option value="Доминикана">Доминикана</option>
+          <option value="Бар">Бар</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Должность</label>
+        <input x-model="newVacancy.title" placeholder="Например: Супервайзер" 
+               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Зарплата</label>
+        <input x-model="newVacancy.salary" placeholder="Например: $5000 – $8000 / мес" 
+               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Описание</label>
+        <textarea x-model="newVacancy.description" placeholder="Краткое описание вакансии..." rows="3"
+                  class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none resize-none text-base"></textarea>
+      </div>
     </div>
     <div class="flex gap-3 mt-6 md:mt-8">
-      <button @click="showAddVacancy = false" class="flex-1 py-4 border border-zinc-700 rounded-2xl hover:bg-zinc-800 transition-colors tap-target">Отмена</button>
-      <button @click="addVacancy()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors font-semibold tap-target"><i class="fa-solid fa-plus mr-2"></i> Добавить</button>
+      <button @click="showAddVacancy = false" class="flex-1 py-4 border border-zinc-700 rounded-2xl hover:bg-zinc-800 transition-colors tap-target">
+        Отмена
+      </button>
+      <button @click="addVacancy()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors font-semibold tap-target">
+        <i class="fa-solid fa-plus mr-2"></i> Добавить
+      </button>
     </div>
   </div>
 </div>
 
 <script>
-// ==================== FIREBASE CONFIG ====================
-// ЗАМЕНИ ЭТИ ЗНАЧЕНИЯ НА СВОИ ИЗ FIREBASE CONSOLE!
-const firebaseConfig = {
-  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-  authDomain: "your-project-id.firebaseapp.com",
-  projectId: "your-project-id",
-  storageBucket: "your-project-id.appspot.com",
-  messagingSenderId: "123456789",
-  appId: "1:123456789:web:abcdef123456"
-};
-
-// Инициализация Firebase
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
 function app() {
   return {
-    // === STATE ===
     screen: 'cities',
     isHR: false,
     showLogin: false,
     hrTab: 'dashboard',
     showAddVacancy: false,
     sidebarOpen: false,
-    loading: false,
-    loadingText: 'Загрузка...',
-    toast: { show: false, message: '', type: 'success' },
-
+    
     loginUser: '',
     loginPass: '',
     currentUser: '',
-    currentLogin: '',
     assignedHR: null,
-
+    
     selectedCity: null,
     selectedVacancy: null,
     currentStep: 1,
     form: {},
-
+    
     search: '',
     filterCity: '',
     filterVacancy: '',
-
+    
+    newLogin: '',
     newPass: '',
     confirmPass: '',
-
+    
     hrContacts: { whatsapp: '', telegram: '' },
-
+    
     newVacancy: { city: 'Медельин', title: '', salary: '', description: '' },
+    
+    hrAccounts: {
+      "nik":     { pass: "1234", name: "Nik",     whatsapp: "79990000001", telegram: "nik_hr" },
+      "elya":    { pass: "1234", name: "Elya",    whatsapp: "79990000002", telegram: "elya_hr" },
+      "tori":    { pass: "1234", name: "TORI",    whatsapp: "79990000003", telegram: "tori_hr" },
+      "jenya":   { pass: "1234", name: "JENYA",   whatsapp: "79990000004", telegram: "jenya_hr" },
+      "sanya":   { pass: "1234", name: "SANYA",   whatsapp: "79990000005", telegram: "sanya_hr" },
+      "valeria": { pass: "1234", name: "VALERIA", whatsapp: "79990000006", telegram: "valeria_hr" },
+      "sasha":   { pass: "1234", name: "SASHA",   whatsapp: "79990000007", telegram: "sasha_hr" }
+    },
+
+    defaultVacancies: [
+      { id: 1, city: "Медельин", title: "Агент Конверсии", salary: "$1,200 – $4,500 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
+      { id: 2, city: "Медельин", title: "Тимлид Конверсии", salary: "$3,500 – $5,000 / мес", description: "Управление командой агентов, контроль KPI" },
+      { id: 3, city: "Медельин", title: "Агент Удержания", salary: "$1,200 – $2,500 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
+      { id: 4, city: "Медельин", title: "Тимлид Удержания", salary: "$2,000 – $4,800 / мес", description: "Управление отделом удержания" },
+      { id: 5, city: "Доминикана", title: "Агент Конверсии", salary: "$1,200 – $4,500 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
+      { id: 6, city: "Доминикана", title: "Тимлид Конверсии", salary: "$3,500 – $5,000 / мес", description: "Управление командой агентов, контроль KPI" },
+      { id: 7, city: "Доминикана", title: "Агент Удержания", salary: "$1,200 – $2,500 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
+      { id: 8, city: "Доминикана", title: "Тимлид Удержания", salary: "$2,000 – $4,800 / мес", description: "Управление отделом удержания" },
+      { id: 9, city: "Бар", title: "Агент Конверсии", salary: "$2,000 – $3,800 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
+      { id: 10, city: "Бар", title: "Тимлид Конверсии", salary: "$3,000 – $4,500 / мес", description: "Управление командой агентов, контроль KPI" },
+      { id: 11, city: "Бар", title: "Агент Удержания", salary: "$2,000 – $3,800 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
+      { id: 12, city: "Бар", title: "Тимлид Удержания", salary: "$3,000 – $4,500 / мес", description: "Управление отделом удержания" }
+    ],
 
     vacancies: [],
-    applications: [],
 
     questions: [
       { text: "Какие языки знаете на хорошем уровне?", key: "languages", placeholder: "Испанский, Английский...", subtext: "Укажите языки и уровень владения" },
@@ -646,166 +1116,108 @@ function app() {
       { text: "Сколько человек готовы поехать с вами?", key: "teamSize", placeholder: "1 (только я)", subtext: "Командой или одиночка?" }
     ],
 
-    // === COMPUTED ===
+    init() {
+      const savedAccounts = localStorage.getItem('hr_accounts');
+      if (savedAccounts) {
+        this.hrAccounts = JSON.parse(savedAccounts);
+      } else {
+        localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
+      }
+
+      const savedVacancies = localStorage.getItem('hr_vacancies');
+      if (savedVacancies) {
+        this.vacancies = JSON.parse(savedVacancies);
+      } else {
+        this.vacancies = [...this.defaultVacancies];
+        localStorage.setItem('hr_vacancies', JSON.stringify(this.vacancies));
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const hrRef = params.get('hr');
+      if (hrRef && this.hrAccounts[hrRef.toLowerCase()]) {
+        this.assignedHR = this.hrAccounts[hrRef.toLowerCase()].name;
+      }
+
+      // On desktop, sidebar always open when HR is logged in
+      this.$watch('isHR', (val) => {
+        if (val && window.innerWidth >= 768) {
+          this.sidebarOpen = true;
+        }
+      });
+    },
+
     get totalSteps() { return this.questions.length + 2; },
     get progress() { return Math.round(((this.currentStep - 1) / (this.totalSteps - 1)) * 100); },
 
-    get personalLink() { return window.location.origin + window.location.pathname + "?hr=" + (this.currentLogin || ''); },
-    get hrWhatsApp() { return this.hrContacts.whatsapp; },
-    get hrTelegram() { return this.hrContacts.telegram; },
+    get applications() {
+      if (!this.currentUser) return [];
+      return JSON.parse(localStorage.getItem('apps_' + this.currentUser.toLowerCase())) || [];
+    },
+
+    set applications(val) {
+      if (!this.currentUser) return;
+      localStorage.setItem('apps_' + this.currentUser.toLowerCase(), JSON.stringify(val));
+    },
+
+    get personalLink() {
+      const userKey = this.getUserKeyByName(this.currentUser);
+      return window.location.origin + window.location.pathname + "?hr=" + (userKey || '');
+    },
+
+    get hrWhatsApp() {
+      if (!this.assignedHR) return null;
+      const key = this.getUserKeyByName(this.assignedHR);
+      return key ? this.hrAccounts[key]?.whatsapp : null;
+    },
+
+    get hrTelegram() {
+      if (!this.assignedHR) return null;
+      const key = this.getUserKeyByName(this.assignedHR);
+      return key ? this.hrAccounts[key]?.telegram : null;
+    },
 
     get whatsappLink() {
       if (!this.hrWhatsApp) return '#';
-      return `https://wa.me/${this.hrWhatsApp}?text=${encodeURIComponent(this.generateContactMessage())}`;
+      const msg = this.generateContactMessage();
+      return `https://wa.me/${this.hrWhatsApp}?text=${encodeURIComponent(msg)}`;
     },
+
     get telegramLink() {
       if (!this.hrTelegram) return '#';
-      return `https://t.me/${this.hrTelegram}?text=${encodeURIComponent(this.generateContactMessage())}`;
+      const msg = this.generateContactMessage();
+      return `https://t.me/${this.hrTelegram}?text=${encodeURIComponent(msg)}`;
     },
 
     get editableVacancies() {
-      return this.vacancies.map(v => ({ ...v, isEditing: false, editTitle: v.title, editSalary: v.salary, editDescription: v.description || '', editCity: v.city }));
+      return this.vacancies.map(v => ({
+        ...v,
+        isEditing: false,
+        editTitle: v.title,
+        editSalary: v.salary,
+        editDescription: v.description || '',
+        editCity: v.city
+      }));
     },
 
-    get allVacancyTitles() { return [...new Set(this.vacancies.map(v => v.title))]; },
+    get allVacancyTitles() {
+      return [...new Set(this.vacancies.map(v => v.title))];
+    },
 
     get filteredApps() {
       let apps = [...this.applications];
-      if (this.search) apps = apps.filter(a => a.name?.toLowerCase().includes(this.search.toLowerCase()));
+      if (this.search) apps = apps.filter(a => a.name.toLowerCase().includes(this.search.toLowerCase()));
       if (this.filterCity) apps = apps.filter(a => a.city === this.filterCity);
       if (this.filterVacancy) apps = apps.filter(a => a.vacancy === this.filterVacancy);
-      return apps;
+      return apps.sort((a, b) => new Date(b.date) - new Date(a.date));
     },
 
     get recentApplications() {
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      return this.applications.filter(a => {
-        const d = a.date?.toDate ? a.date.toDate() : new Date(a.date);
-        return d > weekAgo;
-      }).length;
-    },
-
-    // === INIT ===
-    async init() {
-      this.loading = true;
-      this.loadingText = 'Загрузка вакансий...';
-      try {
-        await this.loadVacancies();
-
-        // Проверяем реферал в URL
-        const params = new URLSearchParams(window.location.search);
-        const hrRef = params.get('hr');
-        if (hrRef) {
-          const doc = await db.collection('hr_accounts').doc(hrRef.toLowerCase()).get();
-          if (doc.exists) {
-            this.assignedHR = doc.data().name;
-          }
-        }
-
-        // Проверяем сохранённую сессию
-        const savedSession = localStorage.getItem('hr_session');
-        if (savedSession) {
-          try {
-            const session = JSON.parse(savedSession);
-            if (session.login && session.name) {
-              // Проверяем, что аккаунт всё ещё существует
-              const doc = await db.collection('hr_accounts').doc(session.login).get();
-              if (doc.exists) {
-                this.isHR = true;
-                this.currentUser = session.name;
-                this.currentLogin = session.login;
-                this.hrContacts.whatsapp = doc.data().whatsapp || '';
-                this.hrContacts.telegram = doc.data().telegram || '';
-                await this.loadApplications();
-                if (window.innerWidth >= 768) this.sidebarOpen = true;
-              }
-            }
-          } catch(e) { localStorage.removeItem('hr_session'); }
-        }
-      } catch(e) {
-        console.error('Init error:', e);
-        this.showToast('Ошибка подключения к базе данных', 'error');
-      } finally {
-        this.loading = false;
-      }
-    },
-
-    // === FIREBASE METHODS ===
-    async loadVacancies() {
-      const snapshot = await db.collection('vacancies').get();
-      this.vacancies = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    },
-
-    async loadApplications() {
-      if (!this.currentLogin) return;
-      const snapshot = await db.collection('applications')
-        .where('hrManager', '==', this.currentLogin)
-        .orderBy('date', 'desc')
-        .get();
-      this.applications = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
-    },
-
-    // === TOAST ===
-    showToast(message, type = 'success') {
-      this.toast = { show: true, message, type };
-      setTimeout(() => this.toast.show = false, 3000);
-    },
-
-    // === NAVIGATION ===
-    selectCity(city) { this.selectedCity = city; this.screen = 'vacancies'; },
-    backToCities() { this.selectedCity = null; this.screen = 'cities'; },
-    getVacanciesByCity() { return this.vacancies.filter(v => v.city === this.selectedCity); },
-    getCityVacancyCount(city) { return this.vacancies.filter(v => v.city === city).length; },
-
-    selectVacancy(vac) {
-      this.selectedVacancy = vac;
-      this.form = { name: '', phone: '', languages: '', experience: '', positions: '', results: '', teamSize: '' };
-      this.currentStep = 1;
-      this.screen = 'details';
-    },
-
-    backToVacancies() { this.selectedVacancy = null; this.currentStep = 1; this.form = {}; this.screen = 'vacancies'; },
-
-    nextStep() {
-      if (this.currentStep === this.totalSteps - 1) {
-        this.submitApplication();
-        this.currentStep++;
-      } else {
-        this.currentStep++;
-      }
-    },
-    prevStep() { if (this.currentStep > 1) this.currentStep--; },
-
-    // === APPLICATION SUBMIT ===
-    async submitApplication() {
-      this.loading = true;
-      this.loadingText = 'Отправка анкеты...';
-      try {
-        const appData = {
-          name: this.form.name,
-          phone: this.form.phone,
-          city: this.selectedCity,
-          vacancy: this.selectedVacancy.title,
-          languages: this.form.languages,
-          experience: this.form.experience,
-          positions: this.form.positions,
-          results: this.form.results,
-          teamSize: this.form.teamSize,
-          hrManager: this.assignedHR || this.currentLogin || 'general',
-          date: firebase.firestore.FieldValue.serverTimestamp()
-        };
-        await db.collection('applications').add(appData);
-        this.showToast('Анкета успешно отправлена!');
-      } catch(e) {
-        console.error('Submit error:', e);
-        this.showToast('Ошибка отправки анкеты', 'error');
-      } finally {
-        this.loading = false;
-      }
+      return this.applications.filter(a => new Date(a.date) > weekAgo).length;
     },
 
     generateContactMessage() {
-      return [
+      const lines = [
         `👋 Здравствуйте! Я заполнил анкету на вакансию.`,
         ``,
         `📋 *Мои данные:*`,
@@ -821,126 +1233,214 @@ function app() {
         `👥 *Команда:* ${this.form.teamSize || 'Не указано'}`,
         ``,
         `Жду обратной связи! Спасибо.`
-      ].join('\n');
+      ];
+      return lines.join('\n');
     },
 
     generateAppWhatsAppLink(app) {
-      if (!this.hrContacts.whatsapp) return '#';
+      const phone = this.getHRContact('whatsapp');
+      if (!phone) return '#';
       const msg = [
         `👋 Здравствуйте ${app.name}!`,
         `Я HR-менеджер ${this.currentUser} из Forex Call Center.`,
         `Вы откликнулись на вакансию "${app.vacancy}" в ${app.city}.`,
         `Давайте обсудим детали! Когда вам удобно созвониться?`
       ].join('\n');
-      return `https://wa.me/${app.phone?.replace(/\D/g, '') || ''}?text=${encodeURIComponent(msg)}`;
+      return `https://wa.me/${app.phone.replace(/\D/g, '')}?text=${encodeURIComponent(msg)}`;
     },
 
     generateAppTelegramLink(app) {
-      if (!this.hrContacts.telegram) return '#';
-      return `https://t.me/${this.hrContacts.telegram}`;
+      const username = this.getHRContact('telegram');
+      if (!username) return '#';
+      return `https://t.me/${username}`;
     },
 
-    resetAll() { this.screen = 'cities'; this.selectedCity = null; this.selectedVacancy = null; this.currentStep = 1; this.form = {}; },
+    getHRContact(type) {
+      const key = this.getUserKeyByName(this.currentUser);
+      return key ? this.hrAccounts[key]?.[type] : null;
+    },
 
-    // === AUTH ===
-    async login() {
-      this.loading = true;
-      this.loadingText = 'Вход...';
-      try {
-        const user = this.loginUser.toLowerCase().trim();
-        const doc = await db.collection('hr_accounts').doc(user).get();
-        if (!doc.exists || doc.data().pass !== this.loginPass) {
-          this.showToast('Неверные данные для входа', 'error');
-          return;
-        }
-        const data = doc.data();
+    getCityVacancyCount(city) {
+      return this.vacancies.filter(v => v.city === city).length;
+    },
+
+    selectCity(city) {
+      this.selectedCity = city;
+      this.screen = 'vacancies';
+    },
+
+    backToCities() {
+      this.selectedCity = null;
+      this.screen = 'cities';
+    },
+
+    getVacanciesByCity() {
+      return this.vacancies.filter(v => v.city === this.selectedCity);
+    },
+
+    selectVacancy(vac) {
+      this.selectedVacancy = vac;
+      this.form = { name: '', phone: '', languages: '', experience: '', positions: '', results: '', teamSize: '' };
+      this.currentStep = 1;
+      this.screen = 'details';
+    },
+
+    backToVacancies() {
+      this.selectedVacancy = null;
+      this.currentStep = 1;
+      this.form = {};
+      this.screen = 'vacancies';
+    },
+
+    nextStep() {
+      if (this.currentStep === this.totalSteps - 1) {
+        this.submitApplication();
+        this.currentStep++;
+      } else {
+        this.currentStep++;
+      }
+    },
+
+    prevStep() {
+      if (this.currentStep > 1) this.currentStep--;
+    },
+
+    submitApplication() {
+      const app = {
+        id: Date.now(),
+        name: this.form.name,
+        phone: this.form.phone,
+        city: this.selectedCity,
+        vacancy: this.selectedVacancy.title,
+        languages: this.form.languages,
+        experience: this.form.experience,
+        positions: this.form.positions,
+        results: this.form.results,
+        teamSize: this.form.teamSize,
+        date: new Date().toISOString(),
+        hrManager: this.assignedHR || 'General'
+      };
+
+      const targetHR = this.assignedHR ? this.getUserKeyByName(this.assignedHR) : null;
+      const key = targetHR ? 'apps_' + targetHR : 'apps_general';
+      const existing = JSON.parse(localStorage.getItem(key)) || [];
+      existing.push(app);
+      localStorage.setItem(key, JSON.stringify(existing));
+    },
+
+    getUserKeyByName(name) {
+      for (const [key, val] of Object.entries(this.hrAccounts)) {
+        if (val.name === name) return key;
+      }
+      return null;
+    },
+
+    resetAll() {
+      this.screen = 'cities';
+      this.selectedCity = null;
+      this.selectedVacancy = null;
+      this.currentStep = 1;
+      this.form = {};
+    },
+
+    login() {
+      const user = this.loginUser.toLowerCase().trim();
+      const acc = this.hrAccounts[user];
+      if (acc && this.loginPass === acc.pass) {
         this.isHR = true;
-        this.currentUser = data.name;
-        this.currentLogin = user;
-        this.hrContacts.whatsapp = data.whatsapp || '';
-        this.hrContacts.telegram = data.telegram || '';
+        this.currentUser = acc.name;
         this.showLogin = false;
         this.loginUser = '';
         this.loginPass = '';
         this.hrTab = 'dashboard';
-
-        // Сохраняем сессию
-        localStorage.setItem('hr_session', JSON.stringify({ login: user, name: data.name }));
-
-        await this.loadApplications();
-        if (window.innerWidth >= 768) this.sidebarOpen = true;
-        this.showToast(`Добро пожаловать, ${data.name}!`);
-      } catch(e) {
-        console.error('Login error:', e);
-        this.showToast('Ошибка входа', 'error');
-      } finally {
-        this.loading = false;
+        this.hrContacts.whatsapp = acc.whatsapp || '';
+        this.hrContacts.telegram = acc.telegram || '';
+        // On desktop open sidebar automatically
+        if (window.innerWidth >= 768) {
+          this.sidebarOpen = true;
+        }
+      } else {
+        alert("Неверные данные для входа");
       }
     },
 
     logout() {
       this.isHR = false;
       this.currentUser = '';
-      this.currentLogin = '';
       this.hrTab = 'dashboard';
       this.sidebarOpen = false;
       this.search = '';
       this.filterCity = '';
       this.filterVacancy = '';
       this.hrContacts = { whatsapp: '', telegram: '' };
-      this.applications = [];
-      localStorage.removeItem('hr_session');
     },
 
-    // === SETTINGS ===
-    async updateCredentials() {
+    updateCredentials() {
+      const currentKey = this.getUserKeyByName(this.currentUser);
+      if (!currentKey) return alert('Ошибка: пользователь не найден');
+
       if (this.newPass && this.newPass !== this.confirmPass) {
-        return this.showToast('Пароли не совпадают', 'error');
+        return alert('Пароли не совпадают');
       }
       if (this.newPass && this.newPass.length < 4) {
-        return this.showToast('Пароль минимум 4 символа', 'error');
-      }
-      if (!this.newPass) {
-        return this.showToast('Введите новый пароль', 'error');
+        return alert('Пароль должен быть минимум 4 символа');
       }
 
-      this.loading = true;
-      try {
-        await db.collection('hr_accounts').doc(this.currentLogin).update({ pass: this.newPass });
-        this.newPass = '';
-        this.confirmPass = '';
-        this.showToast('Пароль обновлён!');
-      } catch(e) {
-        this.showToast('Ошибка обновления пароля', 'error');
-      } finally {
-        this.loading = false;
+      const updatedAccount = { ...this.hrAccounts[currentKey] };
+      
+      if (this.newPass) updatedAccount.pass = this.newPass;
+      
+      if (this.newLogin && this.newLogin.toLowerCase().trim() !== currentKey) {
+        const newKey = this.newLogin.toLowerCase().trim();
+        
+        if (this.hrAccounts[newKey] && newKey !== currentKey) {
+          return alert('Этот логин уже занят');
+        }
+
+        const oldApps = localStorage.getItem('apps_' + currentKey);
+        if (oldApps) {
+          localStorage.setItem('apps_' + newKey, oldApps);
+          localStorage.removeItem('apps_' + currentKey);
+        }
+
+        delete this.hrAccounts[currentKey];
+        this.hrAccounts[newKey] = updatedAccount;
+        this.currentUser = updatedAccount.name;
+      } else {
+        this.hrAccounts[currentKey] = updatedAccount;
       }
+
+      localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
+      
+      this.newLogin = '';
+      this.newPass = '';
+      this.confirmPass = '';
+      
+      alert('Данные успешно обновлены!');
     },
 
-    async saveContacts() {
+    saveContacts() {
+      const currentKey = this.getUserKeyByName(this.currentUser);
+      if (!currentKey) return alert('Ошибка: пользователь не найден');
+
       if (this.hrContacts.whatsapp && !/^\d+$/.test(this.hrContacts.whatsapp)) {
-        return this.showToast('WhatsApp: только цифры без +', 'error');
+        return alert('WhatsApp номер должен содержать только цифры (без + и пробелов)');
       }
+
       if (this.hrContacts.telegram && this.hrContacts.telegram.startsWith('@')) {
         this.hrContacts.telegram = this.hrContacts.telegram.substring(1);
       }
 
-      this.loading = true;
-      try {
-        await db.collection('hr_accounts').doc(this.currentLogin).update({
-          whatsapp: this.hrContacts.whatsapp,
-          telegram: this.hrContacts.telegram
-        });
-        this.showToast('Контакты сохранены!');
-      } catch(e) {
-        this.showToast('Ошибка сохранения контактов', 'error');
-      } finally {
-        this.loading = false;
-      }
+      this.hrAccounts[currentKey].whatsapp = this.hrContacts.whatsapp;
+      this.hrAccounts[currentKey].telegram = this.hrContacts.telegram;
+      
+      localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
+      alert('Контакты сохранены! Кандидаты увидят кнопки связи после отправки анкеты.');
     },
 
-    // === VACANCIES CRUD ===
-    editVacancy(vac) { vac.isEditing = true; },
+    editVacancy(vac) {
+      vac.isEditing = true;
+    },
 
     cancelVacancyEdit(vac) {
       vac.isEditing = false;
@@ -950,84 +1450,68 @@ function app() {
       vac.editCity = vac.city;
     },
 
-    async saveVacancyEdit(vac) {
-      this.loading = true;
-      try {
-        await db.collection('vacancies').doc(vac.id).update({
-          title: vac.editTitle,
-          salary: vac.editSalary,
-          description: vac.editDescription,
-          city: vac.editCity
-        });
-        await this.loadVacancies();
-        vac.isEditing = false;
-        this.showToast('Вакансия обновлена!');
-      } catch(e) {
-        this.showToast('Ошибка сохранения', 'error');
-      } finally {
-        this.loading = false;
-      }
+    saveVacancyEdit(vac) {
+      const idx = this.vacancies.findIndex(v => v.id === vac.id);
+      if (idx === -1) return;
+
+      this.vacancies[idx] = {
+        ...this.vacancies[idx],
+        title: vac.editTitle,
+        salary: vac.editSalary,
+        description: vac.editDescription,
+        city: vac.editCity
+      };
+
+      this.saveVacancies();
+      vac.isEditing = false;
     },
 
-    async deleteVacancy(id) {
+    deleteVacancy(id) {
       if (!confirm('Удалить вакансию?')) return;
-      this.loading = true;
-      try {
-        await db.collection('vacancies').doc(id).delete();
-        await this.loadVacancies();
-        this.showToast('Вакансия удалена');
-      } catch(e) {
-        this.showToast('Ошибка удаления', 'error');
-      } finally {
-        this.loading = false;
-      }
+      this.vacancies = this.vacancies.filter(v => v.id !== id);
+      this.saveVacancies();
     },
 
-    async addVacancy() {
+    addVacancy() {
       if (!this.newVacancy.title || !this.newVacancy.salary) {
-        return this.showToast('Заполните должность и зарплату', 'error');
+        return alert('Заполните должность и зарплату');
       }
-      this.loading = true;
-      try {
-        await db.collection('vacancies').add({
-          city: this.newVacancy.city,
-          title: this.newVacancy.title,
-          salary: this.newVacancy.salary,
-          description: this.newVacancy.description,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        await this.loadVacancies();
-        this.showAddVacancy = false;
-        this.newVacancy = { city: 'Медельин', title: '', salary: '', description: '' };
-        this.showToast('Вакансия добавлена!');
-      } catch(e) {
-        this.showToast('Ошибка добавления', 'error');
-      } finally {
-        this.loading = false;
-      }
+
+      const newId = Math.max(...this.vacancies.map(v => v.id || 0), 0) + 1;
+      this.vacancies.push({
+        id: newId,
+        city: this.newVacancy.city,
+        title: this.newVacancy.title,
+        salary: this.newVacancy.salary,
+        description: this.newVacancy.description
+      });
+
+      this.saveVacancies();
+      this.showAddVacancy = false;
+      this.newVacancy = { city: 'Медельин', title: '', salary: '', description: '' };
     },
 
-    // === UTILS ===
+    saveVacancies() {
+      localStorage.setItem('hr_vacancies', JSON.stringify(this.vacancies));
+    },
+
     copyLink() {
-      navigator.clipboard.writeText(this.personalLink).then(() => this.showToast('Ссылка скопирована!'));
+      navigator.clipboard.writeText(this.personalLink).then(() => alert('Ссылка скопирована!'));
     },
 
-    countByType(type) { return this.applications.filter(a => a.vacancy?.includes(type)).length; },
+    countByType(type) {
+      return this.applications.filter(a => a.vacancy.includes(type)).length;
+    },
 
     formatDate(dateStr) {
-      if (!dateStr) return '';
-      const d = dateStr.toDate ? dateStr.toDate() : new Date(dateStr);
-      return d.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+      return new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
     },
 
     exportData() {
       const apps = this.filteredApps;
-      if (!apps.length) return this.showToast('Нет данных для экспорта', 'error');
+      if (!apps.length) return alert('Нет данных');
       const headers = ['ФИО','Телефон','Город','Вакансия','Языки','Опыт','Должности','Результаты','Команда','Дата','HR'];
-      const rows = apps.map(a => [
-        a.name, a.phone, a.city, a.vacancy, a.languages, a.experience,
-        a.positions, a.results, a.teamSize, this.formatDate(a.date), a.hrManager
-      ]);
+      const rows = apps.map(a => [a.name, a.phone, a.city, a.vacancy, a.languages, a.experience, a.positions, a.results, a.teamSize, this.formatDate(a.date), a.hrManager]);
       const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
       const blob = new Blob(['\ufeff'+csv], {type:'text/csv'});
       const link = document.createElement('a');
