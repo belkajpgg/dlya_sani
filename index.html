@@ -1,3 +1,4 @@
+а тогда сделай здесь что бы было через supabase и работало с этим vercel github:
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
@@ -9,102 +10,317 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+    /* ---- FLUID BASE ---- */
     *, *::before, *::after { box-sizing: border-box; }
-    html, body { font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; font-size: clamp(14px, 1.2vw + 10px, 16px); }
-    .fs-hero { font-size: clamp(2rem, 8vw, 6rem); line-height: 1.05; }
-    .fs-h2 { font-size: clamp(1.4rem, 4vw, 3rem); line-height: 1.1; }
-    .fs-h3 { font-size: clamp(1.15rem, 3vw, 2rem); line-height: 1.2; }
-    .fs-h4 { font-size: clamp(1rem, 2vw, 1.5rem); line-height: 1.3; }
-    .fs-body { font-size: clamp(0.8rem, 1.5vw, 1rem); }
-    .fs-sm { font-size: clamp(0.7rem, 1.2vw, 0.875rem); }
-    .fs-salary { font-size: clamp(1.1rem, 3vw, 1.875rem); line-height: 1.2; }
-    .gap-fluid { gap: clamp(0.75rem, 2vw, 1.5rem); }
-    .p-fluid { padding: clamp(1rem, 3vw, 2.5rem); }
-    .px-fluid { padding-left: clamp(0.75rem, 3vw, 2.5rem); padding-right: clamp(0.75rem, 3vw, 2.5rem); }
-    .py-fluid { padding-top: clamp(0.75rem, 2vw, 1.5rem); padding-bottom: clamp(0.75rem, 2vw, 1.5rem); }
-    .mb-fluid { margin-bottom: clamp(1rem, 3vw, 3rem); }
-    .mb-fluid-sm { margin-bottom: clamp(0.5rem, 1.5vw, 1.5rem); }
-    .icon-box { width: clamp(2.5rem, 6vw, 3.5rem); height: clamp(2.5rem, 6vw, 3.5rem); border-radius: 0.875rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .icon-box-sm { width: clamp(2rem, 5vw, 3rem); height: clamp(2rem, 5vw, 3rem); border-radius: 0.75rem; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .video-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -2; filter: brightness(0.35) contrast(1.3) saturate(0.7); }
-    .overlay { position: fixed; inset: 0; background: linear-gradient(135deg,rgba(0,0,0,0.75)0%,rgba(15,23,42,0.9)50%,rgba(0,0,0,0.95)100%); z-index: -1; }
-    .glass { background: rgba(255,255,255,0.03); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.08); }
-    .glass-strong { background: rgba(15,23,42,0.6); backdrop-filter: blur(30px); border: 1px solid rgba(255,255,255,0.1); }
-    .card-hover { transition: all 0.6s cubic-bezier(0.4,0,0.2,1); position: relative; overflow: visible; }
-    .card-hover::before { content: ''; position: absolute; inset: 0; border-radius: inherit; background: linear-gradient(135deg,rgba(16,185,129,0.1)0%,transparent 60%); opacity: 0; transition: opacity 0.6s ease; pointer-events: none; }
+
+    html, body {
+      font-family: 'Inter', system-ui, sans-serif;
+      overflow-x: hidden;
+      /* Fluid base font: 14px on 320px → 16px on 1280px */
+      font-size: clamp(14px, 1.2vw + 10px, 16px);
+    }
+
+    /* ---- FLUID TYPE SCALE ---- */
+    /* Use these classes in HTML instead of hard px/rem sizes */
+    .fs-hero   { font-size: clamp(2rem,   8vw, 6rem);   line-height: 1.05; }
+    .fs-hero2  { font-size: clamp(1.75rem, 7vw, 5rem);  line-height: 1.05; }
+    .fs-h2     { font-size: clamp(1.4rem,  4vw, 3rem);  line-height: 1.1;  }
+    .fs-h3     { font-size: clamp(1.15rem, 3vw, 2rem);  line-height: 1.2;  }
+    .fs-h4     { font-size: clamp(1rem,    2vw, 1.5rem); line-height: 1.3; }
+    .fs-body   { font-size: clamp(0.8rem,  1.5vw, 1rem); }
+    .fs-sm     { font-size: clamp(0.7rem,  1.2vw, 0.875rem); }
+    .fs-salary { font-size: clamp(1.1rem,  3vw, 1.875rem); line-height: 1.2; }
+
+    /* ---- FLUID SPACING ---- */
+    .gap-fluid  { gap: clamp(0.75rem, 2vw, 1.5rem); }
+    .p-fluid    { padding: clamp(1rem, 3vw, 2.5rem); }
+    .px-fluid   { padding-left: clamp(0.75rem, 3vw, 2.5rem); padding-right: clamp(0.75rem, 3vw, 2.5rem); }
+    .py-fluid   { padding-top: clamp(0.75rem, 2vw, 1.5rem); padding-bottom: clamp(0.75rem, 2vw, 1.5rem); }
+    .mb-fluid   { margin-bottom: clamp(1rem, 3vw, 3rem); }
+    .mb-fluid-sm{ margin-bottom: clamp(0.5rem, 1.5vw, 1.5rem); }
+
+    /* ---- ICON SIZE ---- */
+    .icon-box {
+      width: clamp(2.5rem, 6vw, 3.5rem);
+      height: clamp(2.5rem, 6vw, 3.5rem);
+      border-radius: 0.875rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .icon-box-sm {
+      width: clamp(2rem, 5vw, 3rem);
+      height: clamp(2rem, 5vw, 3rem);
+      border-radius: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    /* ---- VIDEO / OVERLAY ---- */
+    .video-bg { 
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover; z-index: -2; 
+      filter: brightness(0.35) contrast(1.3) saturate(0.7);
+    }
+    .overlay { 
+      position: fixed; inset: 0; 
+      background: linear-gradient(135deg,rgba(0,0,0,0.75)0%,rgba(15,23,42,0.9)50%,rgba(0,0,0,0.95)100%);
+      z-index: -1;
+    }
+
+    /* ---- GLASS ---- */
+    .glass { 
+      background: rgba(255,255,255,0.03); 
+      backdrop-filter: blur(20px); 
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .glass-strong { 
+      background: rgba(15,23,42,0.6); 
+      backdrop-filter: blur(30px); 
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ---- CARD HOVER ---- */
+    .card-hover { 
+      transition: all 0.6s cubic-bezier(0.4,0,0.2,1); 
+      position: relative;
+      overflow: visible;
+    }
+    .card-hover::before {
+      content: '';
+      position: absolute; inset: 0;
+      border-radius: inherit;
+      background: linear-gradient(135deg,rgba(16,185,129,0.1)0%,transparent 60%);
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      pointer-events: none;
+    }
     .card-hover:hover::before { opacity: 1; }
-    .card-hover:hover { transform: translateY(-8px) scale(1.01); border-color: rgba(16,185,129,0.4); box-shadow: 0 25px 50px -12px rgba(16,185,129,0.25); }
-    .screen { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: flex-start; overflow-y: auto; overflow-x: hidden; padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.5rem); transition: all 0.8s cubic-bezier(0.4,0,0.2,1); -webkit-overflow-scrolling: touch; }
-    .screen-cities-inner { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: clamp(1rem, 3vh, 2.5rem) 0; }
-    .screen-hidden-left { opacity:0; transform:translateX(-80px) scale(0.96); pointer-events:none; filter:blur(8px); }
-    .screen-hidden-right { opacity:0; transform:translateX(80px) scale(0.96); pointer-events:none; filter:blur(8px); }
-    .screen-active { opacity:1; transform:translateX(0) scale(1); pointer-events:all; filter:blur(0); }
-    .money-float { position: fixed; opacity: 0; font-size: clamp(1.2rem, 3vw, 2rem); animation: floatMoney 4s ease-in-out infinite; pointer-events: none; z-index: 0; }
-    @keyframes floatMoney { 0%,100% { transform:translateY(0) rotate(0deg); opacity:0; } 10% { opacity:0.3; } 50% { transform:translateY(-80px) rotate(10deg); opacity:0.1; } 90% { opacity:0; } }
+    .card-hover:hover { 
+      transform: translateY(-8px) scale(1.01); 
+      border-color: rgba(16,185,129,0.4);
+      box-shadow: 0 25px 50px -12px rgba(16,185,129,0.25);
+    }
+
+    /* ---- SCREENS ---- */
+    .screen {
+      position: fixed; inset: 0;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: flex-start;
+      overflow-y: auto; overflow-x: hidden;
+      padding: clamp(1rem, 3vw, 2rem) clamp(0.75rem, 3vw, 1.5rem);
+      transition: all 0.8s cubic-bezier(0.4,0,0.2,1);
+      -webkit-overflow-scrolling: touch;
+    }
+    .screen-cities-inner {
+      min-height: 100%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      width: 100%;
+      padding: clamp(1rem, 3vh, 2.5rem) 0;
+    }
+    .screen-hidden-left  { opacity:0; transform:translateX(-80px) scale(0.96); pointer-events:none; filter:blur(8px); }
+    .screen-hidden-right { opacity:0; transform:translateX(80px)  scale(0.96); pointer-events:none; filter:blur(8px); }
+    .screen-active       { opacity:1; transform:translateX(0) scale(1); pointer-events:all; filter:blur(0); }
+
+    /* ---- MONEY FLOAT ---- */
+    .money-float {
+      position: fixed; opacity: 0;
+      font-size: clamp(1.2rem, 3vw, 2rem);
+      animation: floatMoney 4s ease-in-out infinite;
+      pointer-events: none; z-index: 0;
+    }
+    @keyframes floatMoney {
+      0%,100% { transform:translateY(0) rotate(0deg); opacity:0; }
+      10%  { opacity:0.3; }
+      50%  { transform:translateY(-80px) rotate(10deg); opacity:0.1; }
+      90%  { opacity:0; }
+    }
+
+    /* ---- MISC ---- */
     .salary-glow { text-shadow:0 0 30px rgba(16,185,129,0.5),0 0 60px rgba(16,185,129,0.3); }
+
     .btn-shine { position:relative; overflow:hidden; }
-    .btn-shine::after { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1)50%,transparent 70%); transform:rotate(45deg) translateX(-100%); transition:transform 0.6s; }
+    .btn-shine::after {
+      content:''; position:absolute;
+      top:-50%; left:-50%; width:200%; height:200%;
+      background:linear-gradient(45deg,transparent 30%,rgba(255,255,255,0.1)50%,transparent 70%);
+      transform:rotate(45deg) translateX(-100%); transition:transform 0.6s;
+    }
     .btn-shine:hover::after { transform:rotate(45deg) translateX(100%); }
+
     .vacancy-card { transition:all 0.4s ease; }
     .vacancy-card:hover { transform:translateX(5px); border-left-color:#10b981; }
+
     .perk-icon { transition:all 0.3s ease; }
     .perk-item:hover .perk-icon { transform:scale(1.2) rotate(5deg); }
+
     ::-webkit-scrollbar { width:5px; }
     ::-webkit-scrollbar-track { background:transparent; }
     ::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.2); border-radius:3px; }
-    .pulse-ring { position:absolute; border:2px solid rgba(16,185,129,0.3); border-radius:50%; animation:pulseRing 2s ease-out infinite; }
-    @keyframes pulseRing { 0% { transform:scale(1); opacity:1; } 100% { transform:scale(1.5); opacity:0; } }
-    .edit-input { background:rgba(0,0,0,0.4); border:1px solid rgba(16,185,129,0.4); border-radius:0.75rem; padding:0.5rem 1rem; color:white; width:100%; transition:all 0.3s; font-size: clamp(0.8rem, 1.5vw, 1rem); }
+
+    .pulse-ring {
+      position:absolute;
+      border:2px solid rgba(16,185,129,0.3);
+      border-radius:50%;
+      animation:pulseRing 2s ease-out infinite;
+    }
+    @keyframes pulseRing {
+      0%   { transform:scale(1); opacity:1; }
+      100% { transform:scale(1.5); opacity:0; }
+    }
+
+    .edit-input {
+      background:rgba(0,0,0,0.4);
+      border:1px solid rgba(16,185,129,0.4);
+      border-radius:0.75rem;
+      padding:0.5rem 1rem;
+      color:white; width:100%;
+      transition:all 0.3s;
+      font-size: clamp(0.8rem, 1.5vw, 1rem);
+    }
     .edit-input:focus { outline:none; border-color:#10b981; box-shadow:0 0 0 3px rgba(16,185,129,0.2); }
+
     .modal-enter { animation:modalIn 0.3s ease-out; }
     @keyframes modalIn { from{opacity:0;transform:scale(0.95)} to{opacity:1;transform:scale(1)} }
+
     .badge-hot { background:linear-gradient(135deg,#ef4444,#f97316); }
+
     .contact-btn { transition:all 0.3s ease; }
     .contact-btn:hover { transform:translateY(-3px); box-shadow:0 10px 30px -10px rgba(16,185,129,0.4); }
     .whatsapp-btn { background:linear-gradient(135deg,#25d366,#128c7e); }
     .whatsapp-btn:hover { background:linear-gradient(135deg,#128c7e,#075e54); }
     .telegram-btn { background:linear-gradient(135deg,#0088cc,#005f99); }
     .telegram-btn:hover { background:linear-gradient(135deg,#005f99,#003d66); }
-    .input-fluid { width:100%; background:rgba(24,24,27,0.8); border:1px solid rgba(63,63,70,1); border-radius:1rem; padding: clamp(0.65rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.5rem); font-size: clamp(0.85rem, 1.5vw, 1rem); color:white; transition:border-color 0.2s; }
+
+    /* ---- INPUT / BUTTON BASE (fluid) ---- */
+    .input-fluid {
+      width:100%;
+      background:rgba(24,24,27,0.8);
+      border:1px solid rgba(63,63,70,1);
+      border-radius:1rem;
+      padding: clamp(0.65rem, 2vw, 1.1rem) clamp(0.9rem, 2.5vw, 1.5rem);
+      font-size: clamp(0.85rem, 1.5vw, 1rem);
+      color:white;
+      transition:border-color 0.2s;
+    }
     .input-fluid:focus { outline:none; border-color:#10b981; }
-    .btn-fluid { padding: clamp(0.65rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem); font-size: clamp(0.85rem, 1.5vw, 1.05rem); border-radius:1rem; font-weight:600; transition:all 0.2s; cursor:pointer; min-height: 44px; }
-    .hr-sidebar { position:fixed; left:0; top:0; height:100%; width: clamp(240px, 22vw, 280px); background:rgba(9,9,11,0.97); border-right:1px solid rgba(63,63,70,1); padding: clamp(1rem, 2vw, 1.5rem); z-index:50; display:flex; flex-direction:column; backdrop-filter:blur(20px); transition:transform 0.3s ease; overflow-y:auto; -webkit-overflow-scrolling:touch; }
+
+    .btn-fluid {
+      padding: clamp(0.65rem, 2vw, 1rem) clamp(1.25rem, 3vw, 2rem);
+      font-size: clamp(0.85rem, 1.5vw, 1.05rem);
+      border-radius:1rem;
+      font-weight:600;
+      transition:all 0.2s;
+      cursor:pointer;
+      min-height: 44px;
+    }
+
+    /* ---- HR SIDEBAR ---- */
+    .hr-sidebar {
+      position:fixed; left:0; top:0; height:100%;
+      width: clamp(240px, 22vw, 280px);
+      background:rgba(9,9,11,0.97);
+      border-right:1px solid rgba(63,63,70,1);
+      padding: clamp(1rem, 2vw, 1.5rem);
+      z-index:50; display:flex; flex-direction:column;
+      backdrop-filter:blur(20px);
+      transition:transform 0.3s ease;
+      overflow-y:auto; -webkit-overflow-scrolling:touch;
+    }
     .hr-sidebar.sidebar-hidden { transform:translateX(-100%); }
-    .hr-sidebar-overlay { position:fixed; inset:0; background:rgba(0,0,0,0.6); z-index:40; backdrop-filter:blur(2px); }
-    .hr-main { position:fixed; inset:0; background:rgb(9,9,11); z-index:30; overflow-y:auto; -webkit-overflow-scrolling:touch; transition:margin-left 0.3s ease; }
-    @media (min-width: 768px) { .hr-sidebar { transform:translateX(0) !important; } .hr-main { margin-left: clamp(240px, 22vw, 280px); } .hr-sidebar-overlay { display:none !important; } }
-    @media (max-width: 767px) { .hr-main { margin-left:0 !important; } }
+
+    .hr-sidebar-overlay {
+      position:fixed; inset:0;
+      background:rgba(0,0,0,0.6);
+      z-index:40; backdrop-filter:blur(2px);
+    }
+
+    .hr-main {
+      position:fixed; inset:0;
+      background:rgb(9,9,11);
+      z-index:30; overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
+      transition:margin-left 0.3s ease;
+    }
+
+    @media (min-width: 768px) {
+      .hr-sidebar { transform:translateX(0) !important; }
+      .hr-main    { margin-left: clamp(240px, 22vw, 280px); }
+      .hr-sidebar-overlay { display:none !important; }
+    }
+    @media (max-width: 767px) {
+      .hr-main { margin-left:0 !important; }
+    }
+
+    /* ---- TAPPABLE ---- */
     .tap-target { min-width:44px; min-height:44px; display:flex; align-items:center; justify-content:center; }
-    .cities-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); width: 100%; }
-    .perks-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
-    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); gap: clamp(0.5rem, 1.5vw, 1rem); }
-    .vac-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: clamp(0.75rem, 2vw, 1.5rem); }
-    .filters-grid { display: grid; grid-template-columns: 1fr; gap: clamp(0.5rem, 1.5vw, 1rem); }
+
+    /* ---- CITIES GRID ---- */
+    .cities-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+      gap: clamp(0.75rem, 2vw, 1.5rem);
+      width: 100%;
+    }
+
+    /* ---- PERKS GRID ---- */
+    .perks-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    /* ---- STATS GRID ---- */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr));
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
+
+    /* ---- VAC MGMT GRID ---- */
+    .vac-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr));
+      gap: clamp(0.75rem, 2vw, 1.5rem);
+    }
+
+    /* ---- FILTERS GRID ---- */
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: clamp(0.5rem, 1.5vw, 1rem);
+    }
     @media (min-width: 480px) { .filters-grid { grid-template-columns: 1fr 1fr; } }
     @media (min-width: 900px) { .filters-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
-    .loading { display:inline-block; width:20px; height:20px; border:2px solid rgba(255,255,255,.3); border-radius:50%; border-top-color:#10b981; animation:spin 1s linear infinite; }
-    @keyframes spin { to{transform:rotate(360deg)} }
-    .empty-state { text-align:center; padding:3rem 1rem; color:#71717a; }
-    .empty-state i { font-size:3rem; margin-bottom:1rem; display:block; color:#3f3f46; }
+
   </style>
 <base target="_blank">
 </head>
 <body class="bg-zinc-950 text-zinc-100" x-data="app()" x-init="init()">
 
+<!-- BACKGROUND VIDEO -->
 <video autoplay muted loop playsinline class="video-bg">
   <source src="https://assets.mixkit.co/videos/preview/mixkit-a-bunch-of-dollar-bills-background-47517-large.mp4" type="video/mp4">
 </video>
 <div class="overlay"></div>
 
+<!-- FLOATING MONEY SYMBOLS -->
 <div class="money-float" style="left: 10%; top: 20%; animation-delay: 0s;">💵</div>
 <div class="money-float" style="left: 80%; top: 30%; animation-delay: 1.5s;">💰</div>
 <div class="money-float" style="left: 20%; top: 60%; animation-delay: 3s;">💎</div>
 <div class="money-float" style="left: 70%; top: 70%; animation-delay: 2s;">🏆</div>
 <div class="money-float" style="left: 50%; top: 15%; animation-delay: 0.8s;">🚀</div>
 
-<!-- SCREEN 1: CITIES -->
+<!-- ==================== SCREEN 1: CITIES ==================== -->
 <div class="screen" :class="screen === 'cities' ? 'screen-active' : 'screen-hidden-left'">
   <div class="screen-cities-inner max-w-6xl mx-auto">
+
     <div class="text-center mb-fluid relative z-10">
       <div class="inline-flex items-center gap-2 bg-emerald-500/10 border border-emerald-500/30 rounded-full px-4 py-2 mb-fluid-sm">
         <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
@@ -118,9 +334,13 @@
     </div>
 
     <div class="cities-grid relative z-10">
+      
+      <!-- Medellin -->
       <button @click="selectCity('Медельин')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
-          <div class="icon-box bg-gradient-to-br from-emerald-500 to-emerald-700" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;"><span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇨🇴</span></div>
+          <div class="icon-box bg-gradient-to-br from-emerald-500 to-emerald-700" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
+            <span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇨🇴</span>
+          </div>
           <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-emerald-400 transition-all transform group-hover:translate-x-2" style="font-size:clamp(1rem,2.5vw,1.5rem);"></i>
         </div>
         <h3 class="fs-h3 font-bold mb-1">Медельин</h3>
@@ -132,9 +352,12 @@
         </div>
       </button>
 
+      <!-- Dominican -->
       <button @click="selectCity('Доминикана')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
-          <div class="icon-box bg-gradient-to-br from-cyan-500 to-blue-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;"><span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇩🇴</span></div>
+          <div class="icon-box bg-gradient-to-br from-cyan-500 to-blue-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
+            <span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇩🇴</span>
+          </div>
           <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-emerald-400 transition-all transform group-hover:translate-x-2" style="font-size:clamp(1rem,2.5vw,1.5rem);"></i>
         </div>
         <h3 class="fs-h3 font-bold mb-1">Доминикана</h3>
@@ -146,9 +369,12 @@
         </div>
       </button>
 
+      <!-- Bar -->
       <button @click="selectCity('Бар')" class="glass rounded-2xl p-fluid card-hover text-left group w-full">
         <div class="flex items-center justify-between mb-fluid-sm">
-          <div class="icon-box bg-gradient-to-br from-amber-500 to-orange-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;"><span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇲🇪</span></div>
+          <div class="icon-box bg-gradient-to-br from-amber-500 to-orange-600" style="font-size:clamp(1.1rem,3vw,1.6rem);line-height:1;">
+            <span style="font-family:'Segoe UI Emoji','Apple Color Emoji','Noto Color Emoji',sans-serif;">🇲🇪</span>
+          </div>
           <i class="fa-solid fa-arrow-right text-zinc-600 group-hover:text-emerald-400 transition-all transform group-hover:translate-x-2" style="font-size:clamp(1rem,2.5vw,1.5rem);"></i>
         </div>
         <h3 class="fs-h3 font-bold mb-1">Бар</h3>
@@ -167,15 +393,19 @@
         <span class="fs-sm">Вход для HR</span>
       </button>
     </div>
+
   </div>
 </div>
 
-<!-- SCREEN 2: VACANCIES -->
+<!-- ==================== SCREEN 2: VACANCIES ==================== -->
 <div class="screen" :class="screen === 'vacancies' ? 'screen-active' : (screen === 'cities' ? 'screen-hidden-right' : 'screen-hidden-left')">
+  
   <div class="w-full max-w-5xl relative z-10 pt-2 pb-8">
     <div class="flex items-center justify-between mb-fluid">
       <button @click="backToCities()" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group tap-target">
-        <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all shrink-0"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all shrink-0">
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
         <span class="fs-body">Назад</span>
       </button>
       <div class="text-right">
@@ -187,25 +417,18 @@
     <h2 class="fs-h2 font-bold mb-1">Доступные позиции</h2>
     <p class="text-zinc-400 fs-body mb-fluid">Выберите должность для просмотра условий</p>
 
-    <div x-show="loading" class="text-center py-12">
-      <div class="loading mb-4"></div>
-      <p class="text-zinc-500 fs-sm">Загрузка вакансий...</p>
-    </div>
-
-    <div x-show="!loading && getVacanciesByCity().length === 0" class="empty-state">
-      <i class="fa-solid fa-briefcase"></i>
-      <p class="fs-h4 mb-2">Вакансий пока нет</p>
-      <p class="fs-sm text-zinc-500">В этом городе пока нет открытых позиций. Загляните позже!</p>
-    </div>
-
-    <div x-show="!loading" style="display:flex;flex-direction:column;gap:clamp(0.5rem,1.5vw,1rem);">
+    <div style="display:flex;flex-direction:column;gap:clamp(0.5rem,1.5vw,1rem);">
       <template x-for="(vac, i) in getVacanciesByCity()" :key="vac.id || i">
-        <div @click="selectVacancy(vac)" class="glass-strong rounded-xl cursor-pointer vacancy-card border-l-4 border-transparent hover:bg-white/5 group" style="padding:clamp(0.85rem,2.5vw,2rem);">
+        <div @click="selectVacancy(vac)" 
+             class="glass-strong rounded-xl cursor-pointer vacancy-card border-l-4 border-transparent hover:bg-white/5 group"
+             style="padding:clamp(0.85rem,2.5vw,2rem);">
           <div class="flex items-center justify-between">
             <div class="flex-1 min-w-0 pr-3">
               <div class="flex flex-wrap items-center gap-2 mb-1">
                 <h3 class="fs-h4 font-bold truncate" x-text="vac.title"></h3>
-                <span class="badge-hot text-white px-2 py-1 rounded-full fs-sm font-medium whitespace-nowrap"><i class="fa-solid fa-fire mr-1"></i> Hot</span>
+                <span class="badge-hot text-white px-2 py-1 rounded-full fs-sm font-medium whitespace-nowrap">
+                  <i class="fa-solid fa-fire mr-1"></i> Hot
+                </span>
               </div>
               <p class="text-emerald-400 fs-salary font-bold salary-glow" x-text="vac.salary"></p>
               <p class="text-zinc-500 mt-1 fs-sm" x-text="vac.description || 'Forex Call Center — работа с иностранными клиентами'"></p>
@@ -215,7 +438,9 @@
                 <p class="text-sm text-zinc-500">Тип</p>
                 <p class="text-zinc-300 fs-sm">Офис / Удалённо</p>
               </div>
-              <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-all shrink-0"><i class="fa-solid fa-chevron-right fs-sm"></i></div>
+              <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500 group-hover:text-black transition-all shrink-0">
+                <i class="fa-solid fa-chevron-right fs-sm"></i>
+              </div>
             </div>
           </div>
         </div>
@@ -224,12 +449,17 @@
   </div>
 </div>
 
-<!-- SCREEN 3: DETAILS + APPLY -->
+<!-- ==================== SCREEN 3: JOB DETAILS + APPLY ==================== -->
 <div class="screen" :class="screen === 'details' ? 'screen-active' : 'screen-hidden-right'">
+  
   <div class="w-full max-w-4xl relative z-10 pt-2 pb-10">
-    <div class="flex items-center justify-between sticky top-0 bg-zinc-950/80 backdrop-blur-xl border border-white/5 z-20 rounded-xl mb-fluid" style="padding:clamp(0.6rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+    <!-- Sticky header -->
+    <div class="flex items-center justify-between sticky top-0 bg-zinc-950/80 backdrop-blur-xl border border-white/5 z-20 rounded-xl mb-fluid"
+         style="padding:clamp(0.6rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
       <button @click="backToVacancies()" class="flex items-center gap-2 text-zinc-400 hover:text-white transition-all group tap-target">
-        <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all shrink-0"><i class="fa-solid fa-arrow-left"></i></div>
+        <div class="w-10 h-10 rounded-full border border-zinc-700 flex items-center justify-center group-hover:border-emerald-500 group-hover:bg-emerald-500/10 transition-all shrink-0">
+          <i class="fa-solid fa-arrow-left"></i>
+        </div>
         <span class="fs-sm">К вакансиям</span>
       </button>
       <div class="text-right">
@@ -238,6 +468,7 @@
       </div>
     </div>
 
+    <!-- Vacancy info card -->
     <div class="glass-strong rounded-2xl p-fluid mb-fluid border border-emerald-500/20 relative overflow-hidden">
       <div class="absolute top-0 right-0 w-48 h-48 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none"></div>
       <div class="relative z-10">
@@ -258,24 +489,39 @@
         <div class="perks-grid mb-fluid">
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-plane fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Переезд за счёт компании</p><p class="fs-sm text-zinc-400">Билет + багаж</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Переезд за счёт компании</p>
+              <p class="fs-sm text-zinc-400">Билет + багаж</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-house fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Жильё предоставляется</p><p class="fs-sm text-zinc-400">Комфортные апартаменты</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Жильё предоставляется</p>
+              <p class="fs-sm text-zinc-400">Комфортные апартаменты</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-graduation-cap fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Обучение с нуля</p><p class="fs-sm text-zinc-400">Платное обучение + менторство</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Обучение с нуля</p>
+              <p class="fs-sm text-zinc-400">Платное обучение + менторство</p>
+            </div>
           </div>
           <div class="perk-item flex items-center gap-3 rounded-xl bg-white/5" style="padding:clamp(0.6rem,2vw,1rem);">
             <div class="perk-icon icon-box-sm bg-emerald-500/20 text-emerald-400"><i class="fa-solid fa-chart-line fs-sm"></i></div>
-            <div><p class="font-semibold fs-sm">Рост до Тимлида</p><p class="fs-sm text-zinc-400">2-3 месяца при хороших показателях</p></div>
+            <div>
+              <p class="font-semibold fs-sm">Рост до Тимлида</p>
+              <p class="fs-sm text-zinc-400">2-3 месяца при хороших показателях</p>
+            </div>
           </div>
         </div>
 
         <div class="bg-white/5 rounded-2xl border-l-4 border-emerald-500" style="padding:clamp(0.75rem,2.5vw,1.5rem);">
-          <h4 class="font-bold fs-body mb-3 flex items-center gap-2"><i class="fa-solid fa-circle-info text-emerald-400"></i> Что нужно знать</h4>
+          <h4 class="font-bold fs-body mb-3 flex items-center gap-2">
+            <i class="fa-solid fa-circle-info text-emerald-400"></i>
+            Что нужно знать
+          </h4>
           <ul class="text-zinc-300 fs-sm" style="display:flex;flex-direction:column;gap:clamp(0.35rem,1vw,0.6rem);">
             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0"></i><span>Работа в колл-центре с иностранными клиентами (Forex/Trading)</span></li>
             <li class="flex items-start gap-2"><i class="fa-solid fa-check text-emerald-400 mt-1 shrink-0"></i><span>График 5/2, 8 часов с перерывом</span></li>
@@ -286,6 +532,7 @@
       </div>
     </div>
 
+    <!-- Application Form -->
     <div class="glass-strong rounded-2xl p-fluid border border-white/10">
       <h3 class="fs-h3 font-bold mb-1">Откликнуться на вакансию</h3>
       <p class="text-zinc-400 mb-fluid fs-sm">Заполните анкету — мы свяжемся с вами в течение 24 часов</p>
@@ -301,8 +548,14 @@
       </div>
 
       <div x-show="currentStep === 1" style="display:flex;flex-direction:column;gap:clamp(0.75rem,2vw,1.25rem);">
-        <div><label class="block fs-sm text-zinc-400 mb-2">ФИО</label><input x-model="form.name" placeholder="Иванов Иван Иванович" class="input-fluid"></div>
-        <div><label class="block fs-sm text-zinc-400 mb-2">WhatsApp / Telegram</label><input x-model="form.phone" placeholder="+7 (999) 000-00-00" class="input-fluid"></div>
+        <div>
+          <label class="block fs-sm text-zinc-400 mb-2">ФИО</label>
+          <input x-model="form.name" placeholder="Иванов Иван Иванович" class="input-fluid">
+        </div>
+        <div>
+          <label class="block fs-sm text-zinc-400 mb-2">WhatsApp / Telegram</label>
+          <input x-model="form.phone" placeholder="+7 (999) 000-00-00" class="input-fluid">
+        </div>
       </div>
 
       <template x-for="(q, idx) in questions" :key="idx">
@@ -313,24 +566,36 @@
         </div>
       </template>
 
+      <!-- FINAL STEP -->
       <div x-show="currentStep === totalSteps" class="text-center py-6">
-        <div class="bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-fluid relative" style="width:clamp(4rem,12vw,6rem);height:clamp(4rem,12vw,6rem);">
+        <div class="bg-emerald-500/20 rounded-full flex items-center justify-center mx-auto mb-fluid relative"
+             style="width:clamp(4rem,12vw,6rem);height:clamp(4rem,12vw,6rem);">
           <div class="pulse-ring absolute inset-0 rounded-full"></div>
           <i class="fa-solid fa-check text-emerald-400" style="font-size:clamp(1.5rem,5vw,2.5rem);"></i>
         </div>
         <h3 class="fs-h2 font-bold text-emerald-400 mb-3">Анкета отправлена!</h3>
         <p class="fs-body text-zinc-300 mb-2">Мы свяжемся с вами в ближайшее время</p>
-
+        
         <div x-show="assignedHR" class="mt-fluid mb-fluid">
           <p class="text-zinc-400 mb-4 fs-sm">Ваш HR-менеджер: <span class="text-emerald-400 font-bold" x-text="assignedHR"></span></p>
           <div style="display:flex;flex-direction:column;gap:clamp(0.5rem,2vw,1rem);max-width:28rem;margin:0 auto;">
-            <a :href="whatsappLink" target="_blank" x-show="hrWhatsApp" class="contact-btn whatsapp-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3" style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
+            <a :href="whatsappLink" target="_blank" x-show="hrWhatsApp" 
+               class="contact-btn whatsapp-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3"
+               style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
               <i class="fa-brands fa-whatsapp" style="font-size:clamp(1.2rem,3vw,1.5rem);"></i>
-              <div class="text-left"><div class="fs-sm opacity-80">Написать в</div><div class="fs-body font-semibold">WhatsApp</div></div>
+              <div class="text-left">
+                <div class="fs-sm opacity-80">Написать в</div>
+                <div class="fs-body font-semibold">WhatsApp</div>
+              </div>
             </a>
-            <a :href="telegramLink" target="_blank" x-show="hrTelegram" class="contact-btn telegram-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3" style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
+            <a :href="telegramLink" target="_blank" x-show="hrTelegram" 
+               class="contact-btn telegram-btn rounded-2xl font-semibold text-white flex items-center justify-center gap-3"
+               style="padding:clamp(0.75rem,2vw,1rem) clamp(1rem,3vw,1.5rem);">
               <i class="fa-brands fa-telegram" style="font-size:clamp(1.2rem,3vw,1.5rem);"></i>
-              <div class="text-left"><div class="fs-sm opacity-80">Написать в</div><div class="fs-body font-semibold">Telegram</div></div>
+              <div class="text-left">
+                <div class="fs-sm opacity-80">Написать в</div>
+                <div class="fs-body font-semibold">Telegram</div>
+              </div>
             </a>
           </div>
           <p x-show="!hrWhatsApp && !hrTelegram" class="text-zinc-500 mt-3 fs-sm">HR пока не указал контакты для связи</p>
@@ -340,12 +605,18 @@
           <p class="text-zinc-400 fs-sm">Общая заявка отправлена. Мы свяжемся с вами.</p>
         </div>
 
-        <button @click="resetAll()" class="btn-fluid bg-zinc-800 hover:bg-zinc-700 transition-colors">Вернуться на главную</button>
+        <button @click="resetAll()" class="btn-fluid bg-zinc-800 hover:bg-zinc-700 transition-colors">
+          Вернуться на главную
+        </button>
       </div>
 
       <div class="flex justify-between mt-fluid" x-show="currentStep < totalSteps">
-        <button @click="prevStep" x-show="currentStep > 1" class="btn-fluid border border-zinc-700 hover:bg-zinc-800 transition-all">Назад</button>
-        <button @click="nextStep" class="btn-shine btn-fluid bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 font-semibold shadow-lg shadow-emerald-900/30 ml-auto flex items-center gap-2">
+        <button @click="prevStep" x-show="currentStep > 1" 
+                class="btn-fluid border border-zinc-700 hover:bg-zinc-800 transition-all">
+          Назад
+        </button>
+        <button @click="nextStep" 
+                class="btn-shine btn-fluid bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 font-semibold shadow-lg shadow-emerald-900/30 ml-auto flex items-center gap-2">
           <span x-text="currentStep === totalSteps - 1 ? 'Отправить анкету' : 'Далее'"></span>
           <i class="fa-solid fa-arrow-right"></i>
         </button>
@@ -354,57 +625,98 @@
   </div>
 </div>
 
-<!-- HR LOGIN MODAL -->
-<div x-show="showLogin" x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100" class="fixed inset-0 bg-black/90 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
+<!-- ==================== HR LOGIN MODAL ==================== -->
+<div x-show="showLogin" 
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0 scale-95"
+     x-transition:enter-end="opacity-100 scale-100"
+     class="fixed inset-0 bg-black/90 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
   <div class="glass-strong border border-zinc-700 rounded-t-3xl sm:rounded-3xl w-full sm:max-w-md mx-0 sm:mx-4 relative modal-enter p-fluid">
     <button @click="showLogin = false" class="absolute top-4 right-4 text-zinc-400 hover:text-white text-2xl transition-colors tap-target">&times;</button>
     <h2 class="fs-h2 font-bold mb-fluid text-center bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">HR Вход</h2>
     <input x-model="loginUser" placeholder="Имя (например: nik)" class="input-fluid" style="margin-bottom:clamp(0.75rem,2vw,1.25rem);">
     <input x-model="loginPass" type="password" placeholder="Пароль" class="input-fluid" style="margin-bottom:clamp(1rem,3vw,2rem);">
-    <button @click="login()" class="w-full btn-fluid bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-900/50">Войти</button>
+    <button @click="login()" 
+            class="w-full btn-fluid bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 shadow-lg shadow-emerald-900/50">
+      Войти
+    </button>
     <p class="text-center text-zinc-500 mt-4 fs-sm">Демо: nik / 1234</p>
   </div>
 </div>
 
-<!-- HR SIDEBAR OVERLAY -->
-<div x-show="isHR && sidebarOpen" @click="sidebarOpen = false" class="hr-sidebar-overlay md:hidden" x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0" x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-150" x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"></div>
+<!-- ==================== HR SIDEBAR OVERLAY (mobile) ==================== -->
+<div x-show="isHR && sidebarOpen" 
+     @click="sidebarOpen = false"
+     class="hr-sidebar-overlay md:hidden"
+     x-transition:enter="transition ease-out duration-200"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     x-transition:leave="transition ease-in duration-150"
+     x-transition:leave-start="opacity-100"
+     x-transition:leave-end="opacity-0">
+</div>
 
-<!-- HR SIDEBAR -->
-<div x-show="isHR" class="hr-sidebar" :class="{ 'sidebar-hidden': !sidebarOpen }" x-cloak>
+<!-- ==================== HR SIDEBAR ==================== -->
+<div x-show="isHR" 
+     class="hr-sidebar"
+     :class="{ 'sidebar-hidden': !sidebarOpen }"
+     x-cloak>
+
   <div class="mb-8">
+    <!-- Mobile close button -->
     <div class="flex items-center justify-between mb-4 md:mb-0">
-      <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3"><i class="fa-solid fa-chart-line text-emerald-400"></i>Forex HR</h1>
-      <button @click="sidebarOpen = false" class="md:hidden text-zinc-400 hover:text-white tap-target"><i class="fa-solid fa-xmark text-xl"></i></button>
+      <h1 class="text-xl md:text-2xl font-bold flex items-center gap-3">
+        <i class="fa-solid fa-chart-line text-emerald-400"></i>
+        Forex HR
+      </h1>
+      <button @click="sidebarOpen = false" class="md:hidden text-zinc-400 hover:text-white tap-target">
+        <i class="fa-solid fa-xmark text-xl"></i>
+      </button>
     </div>
     <p class="text-emerald-400 font-medium" x-text="currentUser"></p>
     <span class="text-xs text-zinc-500 bg-zinc-800 px-3 py-1 rounded-full mt-2 inline-block">HR Manager</span>
   </div>
+  
   <nav class="space-y-2 flex-1">
-    <button @click="hrTab = 'dashboard'; loadApplications(); sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'dashboard' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'dashboard'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'dashboard' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-users w-5"></i> Кандидаты
-      <span x-show="applications.length > 0" x-text="applications.length" class="ml-auto bg-emerald-600 text-white text-xs px-2 py-1 rounded-full"></span>
+      <span x-show="applications.length > 0" x-text="applications.length" 
+            class="ml-auto bg-emerald-600 text-white text-xs px-2 py-1 rounded-full"></span>
     </button>
-    <button @click="hrTab = 'vacancies'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'vacancies' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'vacancies'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'vacancies' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-briefcase w-5"></i> Вакансии
     </button>
-    <button @click="hrTab = 'settings'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'settings' }" class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
+    <button @click="hrTab = 'settings'; sidebarOpen = false" :class="{ 'bg-emerald-600 text-white': hrTab === 'settings' }" 
+            class="w-full text-left px-4 py-3 md:px-5 md:py-4 rounded-2xl flex items-center gap-3 text-zinc-300 hover:bg-white/5 transition-all tap-target">
       <i class="fa-solid fa-gear w-5"></i> Настройки
     </button>
   </nav>
+
   <div class="mt-auto space-y-4 pt-4">
     <div class="bg-zinc-800/50 rounded-2xl p-4">
       <p class="text-zinc-400 text-xs mb-2 uppercase tracking-wider font-semibold">Ваша ссылка</p>
       <div class="bg-zinc-900 rounded-xl p-3 font-mono text-xs break-all text-emerald-400 border border-zinc-700" x-text="personalLink"></div>
-      <button @click="copyLink()" class="mt-2 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2"><i class="fa-regular fa-copy"></i> Копировать</button>
+      <button @click="copyLink()" class="mt-2 w-full bg-zinc-800 hover:bg-zinc-700 py-2 rounded-lg text-sm transition-colors flex items-center justify-center gap-2">
+        <i class="fa-regular fa-copy"></i> Копировать
+      </button>
     </div>
-    <button @click="logout()" class="w-full text-red-400 hover:text-red-300 py-3 rounded-2xl flex items-center gap-3 transition-colors tap-target"><i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти</button>
+    <button @click="logout()" class="w-full text-red-400 hover:text-red-300 py-3 rounded-2xl flex items-center gap-3 transition-colors tap-target">
+      <i class="fa-solid fa-arrow-right-from-bracket"></i> Выйти
+    </button>
   </div>
 </div>
 
-<!-- HR DASHBOARD -->
+<!-- ==================== HR DASHBOARD ==================== -->
 <div x-show="isHR" class="hr-main" x-cloak>
-  <div class="md:hidden flex items-center justify-between border-b border-zinc-800 sticky top-0 bg-zinc-950/95 backdrop-blur-xl z-20" style="padding:clamp(0.75rem,2vw,1rem) clamp(0.75rem,3vw,1.25rem);">
-    <button @click="sidebarOpen = true" class="tap-target text-zinc-300 hover:text-white"><i class="fa-solid fa-bars" style="font-size:clamp(1rem,3vw,1.25rem);"></i></button>
+
+  <!-- Mobile top bar -->
+  <div class="md:hidden flex items-center justify-between border-b border-zinc-800 sticky top-0 bg-zinc-950/95 backdrop-blur-xl z-20"
+       style="padding:clamp(0.75rem,2vw,1rem) clamp(0.75rem,3vw,1.25rem);">
+    <button @click="sidebarOpen = true" class="tap-target text-zinc-300 hover:text-white">
+      <i class="fa-solid fa-bars" style="font-size:clamp(1rem,3vw,1.25rem);"></i>
+    </button>
     <span class="font-semibold fs-body">
       <span x-show="hrTab === 'dashboard'">Кандидаты</span>
       <span x-show="hrTab === 'vacancies'">Вакансии</span>
@@ -415,32 +727,59 @@
 
   <div class="p-fluid max-w-7xl mx-auto">
 
-    <!-- CANDIDATES -->
+    <!-- ====== CANDIDATES TAB ====== -->
     <div x-show="hrTab === 'dashboard'">
       <h2 class="text-2xl md:text-4xl font-bold mb-6 md:mb-8 hidden md:block">Мои кандидаты</h2>
-
+      
+      <!-- Stats grid -->
       <div class="stats-grid mb-fluid">
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Всего</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="applications.length"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">За неделю</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="recentApplications"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Конверсии</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Конверсии')"></p></div>
-        <div class="glass rounded-2xl p-fluid"><p class="text-zinc-400 fs-sm">Удержание</p><p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Удержания')"></p></div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Всего</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="applications.length"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">За неделю</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="recentApplications"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Конверсии</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Конверсии')"></p>
+        </div>
+        <div class="glass rounded-2xl p-fluid">
+          <p class="text-zinc-400 fs-sm">Удержание</p>
+          <p class="fs-h3 font-bold text-emerald-400 mt-1" x-text="countByType('Удержания')"></p>
+        </div>
       </div>
 
+      <!-- Filters -->
       <div class="filters-grid mb-fluid">
         <div class="relative" style="grid-column: 1 / -1;">
           <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500 fs-sm"></i>
-          <input x-model="search" placeholder="Поиск по имени..." class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none transition-colors fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem) clamp(0.65rem,2vw,1rem) 2.5rem;">
+          <input x-model="search" placeholder="Поиск по имени..." 
+                 class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none transition-colors fs-sm"
+                 style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem) clamp(0.65rem,2vw,1rem) 2.5rem;">
         </div>
-        <select x-model="filterCity" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
-          <option value="">Все города</option><option value="Медельин">Медельин</option><option value="Доминикана">Доминикана</option><option value="Бар">Бар</option>
+        <select x-model="filterCity" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+          <option value="">Все города</option>
+          <option value="Медельин">Медельин</option>
+          <option value="Доминикана">Доминикана</option>
+          <option value="Бар">Бар</option>
         </select>
-        <select x-model="filterVacancy" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+        <select x-model="filterVacancy" class="bg-zinc-900 border border-zinc-700 rounded-2xl focus:border-emerald-500 focus:outline-none fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
           <option value="">Все должности</option>
-          <template x-for="vac in allVacancyTitles" :key="vac"><option :value="vac" x-text="vac"></option></template>
+          <template x-for="vac in allVacancyTitles" :key="vac">
+            <option :value="vac" x-text="vac"></option>
+          </template>
         </select>
-        <button @click="exportData()" class="bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-colors flex items-center justify-center gap-2 fs-sm" style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);"><i class="fa-solid fa-download"></i> Экспорт CSV</button>
+        <button @click="exportData()" class="bg-zinc-800 hover:bg-zinc-700 rounded-2xl transition-colors flex items-center justify-center gap-2 fs-sm"
+                style="padding:clamp(0.65rem,2vw,1rem) clamp(0.75rem,2vw,1.25rem);">
+          <i class="fa-solid fa-download"></i> Экспорт CSV
+        </button>
       </div>
 
+      <!-- Table (desktop) / Cards (mobile) -->
       <div class="hidden md:block glass rounded-3xl overflow-hidden">
         <div class="overflow-x-auto">
           <table class="w-full">
@@ -465,27 +804,42 @@
                   <td class="p-5 font-medium text-sm" x-text="app.vacancy"></td>
                   <td class="p-5 text-zinc-400 text-sm" x-text="app.languages"></td>
                   <td class="p-5 text-zinc-400 text-sm" x-text="app.experience"></td>
-                  <td class="p-5 text-zinc-500 text-xs" x-text="formatDate(app.created_at)"></td>
+                  <td class="p-5 text-zinc-500 text-xs" x-text="formatDate(app.date)"></td>
                   <td class="p-5">
                     <div class="flex gap-2">
-                      <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')" class="w-9 h-9 rounded-lg bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center transition-colors tap-target" title="WhatsApp"><i class="fa-brands fa-whatsapp text-white text-sm"></i></a>
-                      <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')" class="w-9 h-9 rounded-lg bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center transition-colors tap-target" title="Telegram"><i class="fa-brands fa-telegram text-white text-sm"></i></a>
+                      <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')" 
+                         class="w-9 h-9 rounded-lg bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center transition-colors tap-target" title="WhatsApp">
+                        <i class="fa-brands fa-whatsapp text-white text-sm"></i>
+                      </a>
+                      <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')" 
+                         class="w-9 h-9 rounded-lg bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center transition-colors tap-target" title="Telegram">
+                        <i class="fa-brands fa-telegram text-white text-sm"></i>
+                      </a>
                     </div>
                   </td>
                 </tr>
               </template>
-              <tr x-show="filteredApps.length === 0"><td colspan="8" class="p-12 text-center text-zinc-500"><i class="fa-solid fa-inbox text-4xl mb-4 block"></i>Нет заявок по выбранным фильтрам</td></tr>
+              <tr x-show="filteredApps.length === 0">
+                <td colspan="8" class="p-12 text-center text-zinc-500">
+                  <i class="fa-solid fa-inbox text-4xl mb-4 block"></i>
+                  Нет заявок по выбранным фильтрам
+                </td>
+              </tr>
             </tbody>
           </table>
         </div>
       </div>
 
+      <!-- Mobile candidate cards -->
       <div class="md:hidden space-y-3">
         <template x-for="app in filteredApps" :key="app.id">
           <div class="glass rounded-2xl p-4 border border-zinc-700/50">
             <div class="flex items-start justify-between mb-3">
-              <div><p class="font-semibold" x-text="app.name"></p><p class="text-emerald-400 text-sm" x-text="app.phone"></p></div>
-              <span class="bg-zinc-800 px-2 py-1 rounded-full text-xs text-zinc-300" x-text="formatDate(app.created_at)"></span>
+              <div>
+                <p class="font-semibold" x-text="app.name"></p>
+                <p class="text-emerald-400 text-sm" x-text="app.phone"></p>
+              </div>
+              <span class="bg-zinc-800 px-2 py-1 rounded-full text-xs text-zinc-300" x-text="formatDate(app.date)"></span>
             </div>
             <div class="flex flex-wrap gap-2 mb-3">
               <span class="bg-zinc-800 px-2 py-1 rounded-full text-xs" x-text="app.city"></span>
@@ -496,18 +850,212 @@
               <p x-show="app.experience"><span class="text-zinc-500">Опыт:</span> <span x-text="app.experience"></span></p>
             </div>
             <div class="flex gap-2">
-              <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')" class="flex-1 py-2 rounded-xl bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center gap-2 text-white text-sm transition-colors"><i class="fa-brands fa-whatsapp"></i> WhatsApp</a>
-              <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')" class="flex-1 py-2 rounded-xl bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center gap-2 text-white text-sm transition-colors"><i class="fa-brands fa-telegram"></i> Telegram</a>
+              <a :href="generateAppWhatsAppLink(app)" target="_blank" x-show="getHRContact('whatsapp')"
+                 class="flex-1 py-2 rounded-xl bg-[#25d366] hover:bg-[#128c7e] flex items-center justify-center gap-2 text-white text-sm transition-colors">
+                <i class="fa-brands fa-whatsapp"></i> WhatsApp
+              </a>
+              <a :href="generateAppTelegramLink(app)" target="_blank" x-show="getHRContact('telegram')"
+                 class="flex-1 py-2 rounded-xl bg-[#0088cc] hover:bg-[#005f99] flex items-center justify-center gap-2 text-white text-sm transition-colors">
+                <i class="fa-brands fa-telegram"></i> Telegram
+              </a>
             </div>
           </div>
         </template>
-        <div x-show="filteredApps.length === 0" class="text-center text-zinc-500 py-12"><i class="fa-solid fa-inbox text-4xl mb-4 block"></i>Нет заявок по выбранным фильтрам</div>
+        <div x-show="filteredApps.length === 0" class="text-center text-zinc-500 py-12">
+          <i class="fa-solid fa-inbox text-4xl mb-4 block"></i>
+          Нет заявок по выбранным фильтрам
+        </div>
       </div>
-    </div><script>
+    </div>
+
+    <!-- ====== VACANCIES MANAGEMENT TAB ====== -->
+    <div x-show="hrTab === 'vacancies'">
+      <div class="flex justify-between items-center mb-6 md:mb-8">
+        <h2 class="text-2xl md:text-4xl font-bold">Вакансии</h2>
+        <button @click="showAddVacancy = true" class="px-4 md:px-6 py-3 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors flex items-center gap-2 text-sm md:text-base tap-target">
+          <i class="fa-solid fa-plus"></i> <span class="hidden sm:inline">Добавить</span>
+        </button>
+      </div>
+
+      <div class="vac-grid">
+        <template x-for="(vac, i) in editableVacancies" :key="vac.id || i">
+          <div class="glass rounded-2xl md:rounded-3xl p-5 md:p-6 border border-zinc-700/50 hover:border-emerald-500/30 transition-all">
+            <div class="flex justify-between items-start mb-4">
+              <span class="text-xs text-zinc-500 uppercase tracking-wider" x-text="vac.city"></span>
+              <div class="flex gap-2">
+                <button @click="editVacancy(vac)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-emerald-600 flex items-center justify-center transition-colors tap-target">
+                  <i class="fa-solid fa-pen text-xs"></i>
+                </button>
+                <button @click="deleteVacancy(vac.id)" class="w-9 h-9 rounded-lg bg-zinc-800 hover:bg-red-600 flex items-center justify-center transition-colors tap-target">
+                  <i class="fa-solid fa-trash text-xs"></i>
+                </button>
+              </div>
+            </div>
+            
+            <div x-show="!vac.isEditing">
+              <h3 class="text-lg md:text-xl font-bold mb-2" x-text="vac.title"></h3>
+              <p class="text-emerald-400 text-base md:text-lg font-bold mb-3" x-text="vac.salary"></p>
+              <p class="text-zinc-400 text-sm" x-text="vac.description || 'Описание не указано'"></p>
+            </div>
+
+            <div x-show="vac.isEditing" class="space-y-3">
+              <input x-model="vac.editTitle" class="edit-input" placeholder="Должность">
+              <input x-model="vac.editSalary" class="edit-input" placeholder="Зарплата">
+              <input x-model="vac.editDescription" class="edit-input" placeholder="Описание">
+              <select x-model="vac.editCity" class="edit-input">
+                <option value="Медельин">Медельин</option>
+                <option value="Доминикана">Доминикана</option>
+                <option value="Бар">Бар</option>
+              </select>
+              <div class="flex gap-2 mt-4">
+                <button @click="saveVacancyEdit(vac)" class="flex-1 py-2 bg-emerald-600 hover:bg-emerald-500 rounded-xl text-sm transition-colors">
+                  <i class="fa-solid fa-check mr-1"></i> Сохранить
+                </button>
+                <button @click="cancelVacancyEdit(vac)" class="flex-1 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-xl text-sm transition-colors">
+                  Отмена
+                </button>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+
+    <!-- ====== SETTINGS TAB ====== -->
+    <div x-show="hrTab === 'settings'">
+      <h2 class="text-2xl md:text-4xl font-bold mb-6 md:mb-8 hidden md:block">Настройки профиля</h2>
+      
+      <div class="glass rounded-2xl md:rounded-3xl p-6 md:p-10 max-w-2xl border border-zinc-700/50 mb-6 md:mb-8">
+        <div class="flex items-center gap-4 mb-6 md:mb-8 pb-6 md:pb-8 border-b border-zinc-800">
+          <div class="w-14 h-14 bg-gradient-to-br from-emerald-500 to-cyan-500 rounded-2xl flex items-center justify-center text-2xl font-bold shrink-0">
+            <span x-text="currentUser?.[0]?.toUpperCase()"></span>
+          </div>
+          <div>
+            <h3 class="text-xl md:text-2xl font-bold" x-text="currentUser"></h3>
+            <p class="text-zinc-400">HR Manager</p>
+          </div>
+        </div>
+
+        <div class="space-y-5">
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Новый логин</label>
+            <input x-model="newLogin" placeholder="Новое имя пользователя" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Новый пароль</label>
+            <input x-model="newPass" type="password" placeholder="Минимум 4 символа" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Подтвердите пароль</label>
+            <input x-model="confirmPass" type="password" placeholder="Повторите пароль" 
+                   class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+          </div>
+          
+          <button @click="updateCredentials()" 
+                  class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base">
+            <i class="fa-solid fa-shield-halved mr-2"></i> Обновить данные входа
+          </button>
+        </div>
+      </div>
+
+      <!-- CONTACTS SETTINGS -->
+      <div class="glass rounded-2xl md:rounded-3xl p-6 md:p-10 max-w-2xl border border-zinc-700/50">
+        <h3 class="text-xl md:text-2xl font-bold mb-5 md:mb-6 flex items-center gap-3">
+          <i class="fa-solid fa-address-card text-emerald-400"></i>
+          Контакты для кандидатов
+        </h3>
+        <p class="text-zinc-400 mb-5 text-sm">Эти контакты будут показаны кандидатам после отправки анкеты. Укажите номер в международном формате без + и пробелов.</p>
+        
+        <div class="space-y-5">
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">WhatsApp номер</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">+</span>
+              <input x-model="hrContacts.whatsapp" placeholder="79990000000" 
+                     class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+            </div>
+            <p class="text-zinc-500 text-xs mt-2">Пример: 79990000000 (без + и пробелов)</p>
+          </div>
+          
+          <div>
+            <label class="block text-sm text-zinc-400 mb-2">Telegram username</label>
+            <div class="relative">
+              <span class="absolute left-4 top-1/2 -translate-y-1/2 text-zinc-500">@</span>
+              <input x-model="hrContacts.telegram" placeholder="username" 
+                     class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl pl-10 pr-5 py-4 focus:border-emerald-500 focus:outline-none transition-colors text-base">
+            </div>
+            <p class="text-zinc-500 text-xs mt-2">Пример: username (без @)</p>
+          </div>
+          
+          <button @click="saveContacts()" 
+                  class="w-full py-4 bg-gradient-to-r from-emerald-600 to-emerald-500 hover:from-emerald-500 hover:to-emerald-400 rounded-2xl font-semibold transition-all text-base">
+            <i class="fa-solid fa-floppy-disk mr-2"></i> Сохранить контакты
+          </button>
+        </div>
+
+        <div class="mt-5 p-4 bg-emerald-500/10 border border-emerald-500/20 rounded-xl">
+          <p class="text-emerald-400 text-sm flex items-center gap-2">
+            <i class="fa-solid fa-circle-info"></i>
+            Кандидаты увидят кнопки связи после отправки анкеты
+          </p>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ADD VACANCY MODAL -->
+<div x-show="showAddVacancy" 
+     x-transition:enter="transition ease-out duration-300"
+     x-transition:enter-start="opacity-0"
+     x-transition:enter-end="opacity-100"
+     class="fixed inset-0 bg-black/80 flex items-end sm:items-center justify-center z-50 backdrop-blur-sm">
+  <div class="glass-strong border border-zinc-700 rounded-t-3xl sm:rounded-3xl p-7 md:p-10 w-full sm:max-w-lg mx-0 sm:mx-4 modal-enter max-h-[90vh] overflow-y-auto">
+    <h3 class="text-2xl md:text-3xl font-bold mb-5 md:mb-6">Новая вакансия</h3>
+    <div class="space-y-4">
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Город</label>
+        <select x-model="newVacancy.city" class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+          <option value="Медельин">Медельин</option>
+          <option value="Доминикана">Доминикана</option>
+          <option value="Бар">Бар</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Должность</label>
+        <input x-model="newVacancy.title" placeholder="Например: Супервайзер" 
+               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Зарплата</label>
+        <input x-model="newVacancy.salary" placeholder="Например: $5000 – $8000 / мес" 
+               class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none text-base">
+      </div>
+      <div>
+        <label class="block text-sm text-zinc-400 mb-2">Описание</label>
+        <textarea x-model="newVacancy.description" placeholder="Краткое описание вакансии..." rows="3"
+                  class="w-full bg-zinc-900 border border-zinc-700 rounded-2xl px-5 py-4 focus:border-emerald-500 focus:outline-none resize-none text-base"></textarea>
+      </div>
+    </div>
+    <div class="flex gap-3 mt-6 md:mt-8">
+      <button @click="showAddVacancy = false" class="flex-1 py-4 border border-zinc-700 rounded-2xl hover:bg-zinc-800 transition-colors tap-target">
+        Отмена
+      </button>
+      <button @click="addVacancy()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-500 rounded-2xl transition-colors font-semibold tap-target">
+        <i class="fa-solid fa-plus mr-2"></i> Добавить
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
 // ===== SUPABASE CONFIG =====
 // ЗАМЕНИ ЭТИ ДВЕ СТРОКИ НА СВОИ:
-const SUPABASE_URL = 'https://your-project.supabase.co';
-const SUPABASE_KEY = 'your-anon-key';
+const SUPABASE_URL = 'https://nvcydznwthgtvcynnnvr.supabase.co/rest/v1/';
+const SUPABASE_KEY = 'sb_publishable_RKa6e0jbYIw9hEMIyk3lHg_0DMlcJQa';
 
 function supabaseFetch(table, options = {}) {
   const url = `${SUPABASE_URL}/rest/v1/${table}`;
@@ -523,14 +1071,10 @@ function supabaseFetch(table, options = {}) {
   if (options.body && typeof options.body === 'object') {
     opts.body = JSON.stringify(options.body);
   }
-
-  console.log('[Supabase] Request:', url, opts.method || 'GET', options.body || '');
-
   return fetch(url, opts).then(async r => {
     const text = await r.text();
-    console.log('[Supabase] Response status:', r.status, 'body:', text.substring(0, 200));
     if (!r.ok) {
-      console.error('[Supabase] ERROR:', r.status, text);
+      console.error('Supabase error:', r.status, text);
       throw new Error(`HTTP ${r.status}: ${text}`);
     }
     try { return JSON.parse(text); } catch(e) { return text; }
@@ -611,7 +1155,6 @@ function app() {
     ],
 
     async init() {
-      console.log('[Init] Starting...');
       await this.loadHRAccounts();
       await this.loadVacancies();
 
@@ -619,9 +1162,7 @@ function app() {
       const hrRef = params.get('hr');
       if (hrRef && this.hrAccounts[hrRef.toLowerCase()]) {
         this.assignedHR = this.hrAccounts[hrRef.toLowerCase()].name;
-        console.log('[Init] Assigned HR:', this.assignedHR);
       }
-      console.log('[Init] Complete. HR accounts loaded:', Object.keys(this.hrAccounts).length);
     },
 
     // ===== VACANCIES: use DB if available, else fallback =====
@@ -639,9 +1180,8 @@ function app() {
         const data = await supabaseFetch('vacancies?select=*&order=id.asc');
         this.dbVacancies = Array.isArray(data) ? data : [];
         this.dbVacanciesLoaded = true;
-        console.log('[Vacancies] Loaded from DB:', this.dbVacancies.length);
       } catch(e) {
-        console.error('[Vacancies] Failed to load:', e);
+        console.error('Failed to load vacancies:', e);
         this.dbVacancies = [];
       }
     },
@@ -651,13 +1191,11 @@ function app() {
         const data = await supabaseFetch('hr_accounts?select=*');
         this.dbHRAccounts = {};
         const arr = Array.isArray(data) ? data : [];
-        console.log('[HR] Raw DB response:', arr);
         arr.forEach(acc => {
           this.dbHRAccounts[acc.username.toLowerCase()] = acc;
         });
-        console.log('[HR] Loaded from DB:', Object.keys(this.dbHRAccounts).length, 'accounts');
       } catch(e) {
-        console.error('[HR] Failed to load from DB, using fallback:', e);
+        console.error('Failed to load HR accounts:', e);
         this.dbHRAccounts = {};
       }
     },
@@ -668,9 +1206,8 @@ function app() {
         const hrName = this.currentUser;
         const data = await supabaseFetch(`applications?select=*&hr_manager=eq.${encodeURIComponent(hrName)}&order=created_at.desc`);
         this.applications = Array.isArray(data) ? data : [];
-        console.log('[Applications] Loaded:', this.applications.length);
       } catch(e) {
-        console.error('[Applications] Failed to load:', e);
+        console.error('Failed to load applications:', e);
         this.applications = [];
       }
     },
@@ -883,12 +1420,7 @@ function app() {
 
     login() {
       const user = this.loginUser.toLowerCase().trim();
-      console.log('[Login] Trying:', user, 'Pass:', this.loginPass);
-      console.log('[Login] Available accounts:', Object.keys(this.hrAccounts));
-
       const acc = this.hrAccounts[user];
-      console.log('[Login] Found account:', acc);
-
       if (acc && this.loginPass === acc.pass) {
         this.isHR = true;
         this.currentUser = acc.name;
@@ -901,9 +1433,7 @@ function app() {
         this.hrContacts.telegram = acc.telegram || '';
         this.loadApplications();
         if (window.innerWidth >= 768) this.sidebarOpen = true;
-        console.log('[Login] SUCCESS as', acc.name);
       } else {
-        console.error('[Login] FAIL. Account exists:', !!acc, 'Pass match:', acc ? this.loginPass === acc.pass : 'N/A');
         alert("Неверные данные для входа");
       }
     },
