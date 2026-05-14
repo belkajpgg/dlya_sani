@@ -1,3 +1,4 @@
+а тогда сделай здесь что бы было через supabase и работало с этим vercel github:
 <!DOCTYPE html>
 <html lang="ru" class="dark">
 <head>
@@ -299,6 +300,7 @@
     @media (min-width: 900px) { .filters-grid { grid-template-columns: 2fr 1fr 1fr 1fr; } }
 
   </style>
+<base target="_blank">
 </head>
 <body class="bg-zinc-950 text-zinc-100" x-data="app()" x-init="init()">
 
@@ -1050,6 +1052,28 @@
 </div>
 
 <script>
+// ===== SUPABASE CONFIG =====
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_KEY = 'your-anon-key';
+
+function supabaseFetch(table, options = {}) {
+  const url = `${SUPABASE_URL}/rest/v1/${table}`;
+  const opts = {
+    headers: {
+      'apikey': SUPABASE_KEY,
+      'Authorization': `Bearer ${SUPABASE_KEY}`,
+      'Content-Type': 'application/json',
+      'Prefer': options.method === 'POST' ? 'return=representation' : undefined
+    },
+    ...options
+  };
+  if (options.body) opts.body = JSON.stringify(options.body);
+  return fetch(url, opts).then(r => {
+    if (!r.ok) throw new Error(`HTTP ${r.status}`);
+    return r.json();
+  });
+}
+
 function app() {
   return {
     screen: 'cities',
@@ -1058,55 +1082,34 @@ function app() {
     hrTab: 'dashboard',
     showAddVacancy: false,
     sidebarOpen: false,
-    
+    loading: false,
+
     loginUser: '',
     loginPass: '',
     currentUser: '',
+    currentUserKey: '',
     assignedHR: null,
-    
+
     selectedCity: null,
     selectedVacancy: null,
     currentStep: 1,
     form: {},
-    
+
     search: '',
     filterCity: '',
     filterVacancy: '',
-    
+
     newLogin: '',
     newPass: '',
     confirmPass: '',
-    
-    hrContacts: { whatsapp: '', telegram: '' },
-    
-    newVacancy: { city: 'Медельин', title: '', salary: '', description: '' },
-    
-    hrAccounts: {
-      "nik":     { pass: "1234", name: "Nik",     whatsapp: "79990000001", telegram: "nik_hr" },
-      "elya":    { pass: "1234", name: "Elya",    whatsapp: "79990000002", telegram: "elya_hr" },
-      "tori":    { pass: "1234", name: "TORI",    whatsapp: "79990000003", telegram: "tori_hr" },
-      "jenya":   { pass: "1234", name: "JENYA",   whatsapp: "79990000004", telegram: "jenya_hr" },
-      "sanya":   { pass: "1234", name: "SANYA",   whatsapp: "79990000005", telegram: "sanya_hr" },
-      "valeria": { pass: "1234", name: "VALERIA", whatsapp: "79990000006", telegram: "valeria_hr" },
-      "sasha":   { pass: "1234", name: "SASHA",   whatsapp: "79990000007", telegram: "sasha_hr" }
-    },
 
-    defaultVacancies: [
-      { id: 1, city: "Медельин", title: "Агент Конверсии", salary: "$1,200 – $4,500 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
-      { id: 2, city: "Медельин", title: "Тимлид Конверсии", salary: "$3,500 – $5,000 / мес", description: "Управление командой агентов, контроль KPI" },
-      { id: 3, city: "Медельин", title: "Агент Удержания", salary: "$1,200 – $2,500 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
-      { id: 4, city: "Медельин", title: "Тимлид Удержания", salary: "$2,000 – $4,800 / мес", description: "Управление отделом удержания" },
-      { id: 5, city: "Доминикана", title: "Агент Конверсии", salary: "$1,200 – $4,500 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
-      { id: 6, city: "Доминикана", title: "Тимлид Конверсии", salary: "$3,500 – $5,000 / мес", description: "Управление командой агентов, контроль KPI" },
-      { id: 7, city: "Доминикана", title: "Агент Удержания", salary: "$1,200 – $2,500 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
-      { id: 8, city: "Доминикана", title: "Тимлид Удержания", salary: "$2,000 – $4,800 / мес", description: "Управление отделом удержания" },
-      { id: 9, city: "Бар", title: "Агент Конверсии", salary: "$2,000 – $3,800 / мес", description: "Работа с новыми клиентами, привлечение депозитов" },
-      { id: 10, city: "Бар", title: "Тимлид Конверсии", salary: "$3,000 – $4,500 / мес", description: "Управление командой агентов, контроль KPI" },
-      { id: 11, city: "Бар", title: "Агент Удержания", salary: "$2,000 – $3,800 / мес", description: "Работа с текущими клиентами, повторные депозиты" },
-      { id: 12, city: "Бар", title: "Тимлид Удержания", salary: "$3,000 – $4,500 / мес", description: "Управление отделом удержания" }
-    ],
+    hrContacts: { whatsapp: '', telegram: '' },
+
+    newVacancy: { city: 'Медельин', title: '', salary: '', description: '' },
 
     vacancies: [],
+    applications: [],
+    hrAccounts: {},
 
     questions: [
       { text: "Какие языки знаете на хорошем уровне?", key: "languages", placeholder: "Испанский, Английский...", subtext: "Укажите языки и уровень владения" },
@@ -1116,52 +1119,57 @@ function app() {
       { text: "Сколько человек готовы поехать с вами?", key: "teamSize", placeholder: "1 (только я)", subtext: "Командой или одиночка?" }
     ],
 
-    init() {
-      const savedAccounts = localStorage.getItem('hr_accounts');
-      if (savedAccounts) {
-        this.hrAccounts = JSON.parse(savedAccounts);
-      } else {
-        localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
-      }
+    async init() {
+      // Load HR accounts
+      await this.loadHRAccounts();
 
-      const savedVacancies = localStorage.getItem('hr_vacancies');
-      if (savedVacancies) {
-        this.vacancies = JSON.parse(savedVacancies);
-      } else {
-        this.vacancies = [...this.defaultVacancies];
-        localStorage.setItem('hr_vacancies', JSON.stringify(this.vacancies));
-      }
+      // Load vacancies
+      await this.loadVacancies();
 
+      // Check URL params for HR ref
       const params = new URLSearchParams(window.location.search);
       const hrRef = params.get('hr');
       if (hrRef && this.hrAccounts[hrRef.toLowerCase()]) {
         this.assignedHR = this.hrAccounts[hrRef.toLowerCase()].name;
       }
+    },
 
-      // On desktop, sidebar always open when HR is logged in
-      this.$watch('isHR', (val) => {
-        if (val && window.innerWidth >= 768) {
-          this.sidebarOpen = true;
-        }
-      });
+    async loadHRAccounts() {
+      try {
+        const data = await supabaseFetch('hr_accounts?select=*');
+        this.hrAccounts = {};
+        data.forEach(acc => {
+          this.hrAccounts[acc.username.toLowerCase()] = acc;
+        });
+      } catch(e) {
+        console.error('Failed to load HR accounts:', e);
+      }
+    },
+
+    async loadVacancies() {
+      try {
+        this.vacancies = await supabaseFetch('vacancies?select=*&order=id.asc');
+      } catch(e) {
+        console.error('Failed to load vacancies:', e);
+      }
+    },
+
+    async loadApplications() {
+      if (!this.currentUser) return;
+      try {
+        const hrName = this.currentUser;
+        this.applications = await supabaseFetch(`applications?select=*&hr_manager=eq.${encodeURIComponent(hrName)}&order=created_at.desc`);
+      } catch(e) {
+        console.error('Failed to load applications:', e);
+        this.applications = [];
+      }
     },
 
     get totalSteps() { return this.questions.length + 2; },
     get progress() { return Math.round(((this.currentStep - 1) / (this.totalSteps - 1)) * 100); },
 
-    get applications() {
-      if (!this.currentUser) return [];
-      return JSON.parse(localStorage.getItem('apps_' + this.currentUser.toLowerCase())) || [];
-    },
-
-    set applications(val) {
-      if (!this.currentUser) return;
-      localStorage.setItem('apps_' + this.currentUser.toLowerCase(), JSON.stringify(val));
-    },
-
     get personalLink() {
-      const userKey = this.getUserKeyByName(this.currentUser);
-      return window.location.origin + window.location.pathname + "?hr=" + (userKey || '');
+      return window.location.origin + window.location.pathname + "?hr=" + (this.currentUserKey || '');
     },
 
     get hrWhatsApp() {
@@ -1208,12 +1216,12 @@ function app() {
       if (this.search) apps = apps.filter(a => a.name.toLowerCase().includes(this.search.toLowerCase()));
       if (this.filterCity) apps = apps.filter(a => a.city === this.filterCity);
       if (this.filterVacancy) apps = apps.filter(a => a.vacancy === this.filterVacancy);
-      return apps.sort((a, b) => new Date(b.date) - new Date(a.date));
+      return apps;
     },
 
     get recentApplications() {
       const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-      return this.applications.filter(a => new Date(a.date) > weekAgo).length;
+      return this.applications.filter(a => new Date(a.created_at) > weekAgo).length;
     },
 
     generateContactMessage() {
@@ -1256,8 +1264,7 @@ function app() {
     },
 
     getHRContact(type) {
-      const key = this.getUserKeyByName(this.currentUser);
-      return key ? this.hrAccounts[key]?.[type] : null;
+      return this.hrAccounts[this.currentUserKey]?.[type] || null;
     },
 
     getCityVacancyCount(city) {
@@ -1305,9 +1312,8 @@ function app() {
       if (this.currentStep > 1) this.currentStep--;
     },
 
-    submitApplication() {
+    async submitApplication() {
       const app = {
-        id: Date.now(),
         name: this.form.name,
         phone: this.form.phone,
         city: this.selectedCity,
@@ -1316,16 +1322,16 @@ function app() {
         experience: this.form.experience,
         positions: this.form.positions,
         results: this.form.results,
-        teamSize: this.form.teamSize,
-        date: new Date().toISOString(),
-        hrManager: this.assignedHR || 'General'
+        team_size: this.form.teamSize,
+        hr_manager: this.assignedHR || 'General'
       };
 
-      const targetHR = this.assignedHR ? this.getUserKeyByName(this.assignedHR) : null;
-      const key = targetHR ? 'apps_' + targetHR : 'apps_general';
-      const existing = JSON.parse(localStorage.getItem(key)) || [];
-      existing.push(app);
-      localStorage.setItem(key, JSON.stringify(existing));
+      try {
+        await supabaseFetch('applications', { method: 'POST', body: app });
+      } catch(e) {
+        console.error('Failed to submit:', e);
+        alert('Ошибка отправки. Попробуйте позже.');
+      }
     },
 
     getUserKeyByName(name) {
@@ -1349,16 +1355,15 @@ function app() {
       if (acc && this.loginPass === acc.pass) {
         this.isHR = true;
         this.currentUser = acc.name;
+        this.currentUserKey = user;
         this.showLogin = false;
         this.loginUser = '';
         this.loginPass = '';
         this.hrTab = 'dashboard';
         this.hrContacts.whatsapp = acc.whatsapp || '';
         this.hrContacts.telegram = acc.telegram || '';
-        // On desktop open sidebar automatically
-        if (window.innerWidth >= 768) {
-          this.sidebarOpen = true;
-        }
+        this.loadApplications();
+        if (window.innerWidth >= 768) this.sidebarOpen = true;
       } else {
         alert("Неверные данные для входа");
       }
@@ -1367,75 +1372,83 @@ function app() {
     logout() {
       this.isHR = false;
       this.currentUser = '';
+      this.currentUserKey = '';
       this.hrTab = 'dashboard';
       this.sidebarOpen = false;
       this.search = '';
       this.filterCity = '';
       this.filterVacancy = '';
       this.hrContacts = { whatsapp: '', telegram: '' };
+      this.applications = [];
     },
 
-    updateCredentials() {
-      const currentKey = this.getUserKeyByName(this.currentUser);
-      if (!currentKey) return alert('Ошибка: пользователь не найден');
+    async updateCredentials() {
+      if (this.newPass && this.newPass !== this.confirmPass) return alert('Пароли не совпадают');
+      if (this.newPass && this.newPass.length < 4) return alert('Пароль минимум 4 символа');
 
-      if (this.newPass && this.newPass !== this.confirmPass) {
-        return alert('Пароли не совпадают');
-      }
-      if (this.newPass && this.newPass.length < 4) {
-        return alert('Пароль должен быть минимум 4 символа');
-      }
-
-      const updatedAccount = { ...this.hrAccounts[currentKey] };
-      
-      if (this.newPass) updatedAccount.pass = this.newPass;
-      
-      if (this.newLogin && this.newLogin.toLowerCase().trim() !== currentKey) {
+      const updates = {};
+      if (this.newPass) updates.pass = this.newPass;
+      if (this.newLogin && this.newLogin.toLowerCase().trim() !== this.currentUserKey) {
         const newKey = this.newLogin.toLowerCase().trim();
-        
-        if (this.hrAccounts[newKey] && newKey !== currentKey) {
-          return alert('Этот логин уже занят');
-        }
-
-        const oldApps = localStorage.getItem('apps_' + currentKey);
-        if (oldApps) {
-          localStorage.setItem('apps_' + newKey, oldApps);
-          localStorage.removeItem('apps_' + currentKey);
-        }
-
-        delete this.hrAccounts[currentKey];
-        this.hrAccounts[newKey] = updatedAccount;
-        this.currentUser = updatedAccount.name;
-      } else {
-        this.hrAccounts[currentKey] = updatedAccount;
+        if (this.hrAccounts[newKey]) return alert('Этот логин занят');
+        updates.username = newKey;
       }
+      if (Object.keys(updates).length === 0) return alert('Нечего обновлять');
 
-      localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
-      
-      this.newLogin = '';
-      this.newPass = '';
-      this.confirmPass = '';
-      
-      alert('Данные успешно обновлены!');
+      try {
+        await supabaseFetch(`hr_accounts?username=eq.${this.currentUserKey}`, { 
+          method: 'PATCH', 
+          body: updates,
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          }
+        });
+
+        if (updates.username) {
+          const oldAcc = this.hrAccounts[this.currentUserKey];
+          delete this.hrAccounts[this.currentUserKey];
+          oldAcc.username = updates.username;
+          this.hrAccounts[updates.username] = oldAcc;
+          this.currentUserKey = updates.username;
+        }
+        if (updates.pass) this.hrAccounts[this.currentUserKey].pass = updates.pass;
+
+        this.newLogin = '';
+        this.newPass = '';
+        this.confirmPass = '';
+        alert('Данные обновлены!');
+      } catch(e) {
+        alert('Ошибка обновления: ' + e.message);
+      }
     },
 
-    saveContacts() {
-      const currentKey = this.getUserKeyByName(this.currentUser);
-      if (!currentKey) return alert('Ошибка: пользователь не найден');
+    async saveContacts() {
+      let wa = this.hrContacts.whatsapp;
+      let tg = this.hrContacts.telegram;
 
-      if (this.hrContacts.whatsapp && !/^\d+$/.test(this.hrContacts.whatsapp)) {
-        return alert('WhatsApp номер должен содержать только цифры (без + и пробелов)');
+      if (wa && !/^\d+$/.test(wa)) return alert('WhatsApp только цифры без +');
+      if (tg && tg.startsWith('@')) tg = tg.substring(1);
+
+      try {
+        await supabaseFetch(`hr_accounts?username=eq.${this.currentUserKey}`, {
+          method: 'PATCH',
+          body: { whatsapp: wa, telegram: tg },
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          }
+        });
+        this.hrAccounts[this.currentUserKey].whatsapp = wa;
+        this.hrAccounts[this.currentUserKey].telegram = tg;
+        alert('Контакты сохранены!');
+      } catch(e) {
+        alert('Ошибка сохранения: ' + e.message);
       }
-
-      if (this.hrContacts.telegram && this.hrContacts.telegram.startsWith('@')) {
-        this.hrContacts.telegram = this.hrContacts.telegram.substring(1);
-      }
-
-      this.hrAccounts[currentKey].whatsapp = this.hrContacts.whatsapp;
-      this.hrAccounts[currentKey].telegram = this.hrContacts.telegram;
-      
-      localStorage.setItem('hr_accounts', JSON.stringify(this.hrAccounts));
-      alert('Контакты сохранены! Кандидаты увидят кнопки связи после отправки анкеты.');
     },
 
     editVacancy(vac) {
@@ -1450,49 +1463,59 @@ function app() {
       vac.editCity = vac.city;
     },
 
-    saveVacancyEdit(vac) {
-      const idx = this.vacancies.findIndex(v => v.id === vac.id);
-      if (idx === -1) return;
-
-      this.vacancies[idx] = {
-        ...this.vacancies[idx],
-        title: vac.editTitle,
-        salary: vac.editSalary,
-        description: vac.editDescription,
-        city: vac.editCity
-      };
-
-      this.saveVacancies();
-      vac.isEditing = false;
-    },
-
-    deleteVacancy(id) {
-      if (!confirm('Удалить вакансию?')) return;
-      this.vacancies = this.vacancies.filter(v => v.id !== id);
-      this.saveVacancies();
-    },
-
-    addVacancy() {
-      if (!this.newVacancy.title || !this.newVacancy.salary) {
-        return alert('Заполните должность и зарплату');
+    async saveVacancyEdit(vac) {
+      try {
+        await supabaseFetch(`vacancies?id=eq.${vac.id}`, {
+          method: 'PATCH',
+          body: {
+            title: vac.editTitle,
+            salary: vac.editSalary,
+            description: vac.editDescription,
+            city: vac.editCity
+          },
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          }
+        });
+        await this.loadVacancies();
+        vac.isEditing = false;
+      } catch(e) {
+        alert('Ошибка сохранения: ' + e.message);
       }
-
-      const newId = Math.max(...this.vacancies.map(v => v.id || 0), 0) + 1;
-      this.vacancies.push({
-        id: newId,
-        city: this.newVacancy.city,
-        title: this.newVacancy.title,
-        salary: this.newVacancy.salary,
-        description: this.newVacancy.description
-      });
-
-      this.saveVacancies();
-      this.showAddVacancy = false;
-      this.newVacancy = { city: 'Медельин', title: '', salary: '', description: '' };
     },
 
-    saveVacancies() {
-      localStorage.setItem('hr_vacancies', JSON.stringify(this.vacancies));
+    async deleteVacancy(id) {
+      if (!confirm('Удалить вакансию?')) return;
+      try {
+        await supabaseFetch(`vacancies?id=eq.${id}`, { method: 'DELETE' });
+        await this.loadVacancies();
+      } catch(e) {
+        alert('Ошибка удаления: ' + e.message);
+      }
+    },
+
+    async addVacancy() {
+      if (!this.newVacancy.title || !this.newVacancy.salary) return alert('Заполните должность и зарплату');
+      try {
+        await supabaseFetch('vacancies', {
+          method: 'POST',
+          body: this.newVacancy,
+          headers: {
+            'apikey': SUPABASE_KEY,
+            'Authorization': `Bearer ${SUPABASE_KEY}`,
+            'Content-Type': 'application/json',
+            'Prefer': 'return=representation'
+          }
+        });
+        await this.loadVacancies();
+        this.showAddVacancy = false;
+        this.newVacancy = { city: 'Медельин', title: '', salary: '', description: '' };
+      } catch(e) {
+        alert('Ошибка добавления: ' + e.message);
+      }
     },
 
     copyLink() {
@@ -1500,10 +1523,11 @@ function app() {
     },
 
     countByType(type) {
-      return this.applications.filter(a => a.vacancy.includes(type)).length;
+      return this.applications.filter(a => a.vacancy && a.vacancy.includes(type)).length;
     },
 
     formatDate(dateStr) {
+      if (!dateStr) return '-';
       return new Date(dateStr).toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
     },
 
@@ -1511,7 +1535,7 @@ function app() {
       const apps = this.filteredApps;
       if (!apps.length) return alert('Нет данных');
       const headers = ['ФИО','Телефон','Город','Вакансия','Языки','Опыт','Должности','Результаты','Команда','Дата','HR'];
-      const rows = apps.map(a => [a.name, a.phone, a.city, a.vacancy, a.languages, a.experience, a.positions, a.results, a.teamSize, this.formatDate(a.date), a.hrManager]);
+      const rows = apps.map(a => [a.name, a.phone, a.city, a.vacancy, a.languages, a.experience, a.positions, a.results, a.team_size, this.formatDate(a.created_at), a.hr_manager]);
       const csv = [headers.join(';'), ...rows.map(r => r.join(';'))].join('\n');
       const blob = new Blob(['\ufeff'+csv], {type:'text/csv'});
       const link = document.createElement('a');
