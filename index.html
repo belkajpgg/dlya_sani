@@ -7,11 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
     *, *::before, *::after { box-sizing: border-box; }
     html, body { font-family: 'Inter', system-ui, sans-serif; overflow-x: hidden; font-size: clamp(14px, 1.2vw + 10px, 16px); }
     .fs-hero   { font-size: clamp(2rem,   8vw, 6rem);   line-height: 1.05; }
+    .fs-hero2  { font-size: clamp(1.75rem, 7vw, 5rem);  line-height: 1.05; }
     .fs-h2     { font-size: clamp(1.4rem,  4vw, 3rem);  line-height: 1.1;  }
     .fs-h3     { font-size: clamp(1.15rem, 3vw, 2rem);  line-height: 1.2;  }
     .fs-h4     { font-size: clamp(1rem,    2vw, 1.5rem); line-height: 1.3; }
@@ -580,53 +584,25 @@
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { 
-  getFirestore, 
-  collection, 
-  doc, 
-  getDoc, 
-  getDocs, 
-  addDoc, 
-  updateDoc, 
-  deleteDoc,
-  query,
-  where,
-  orderBy,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
-
-// ==================== FIREBASE CONFIG (ТВОЙ) ====================
+<script>
+// ==================== FIREBASE CONFIG ====================
+// ЗАМЕНИ ЭТИ ЗНАЧЕНИЯ НА СВОИ ИЗ FIREBASE CONSOLE!
 const firebaseConfig = {
-  apiKey: "AIzaSyB9v44NmcDKnFLxlQ-yE_uqjAp9YFV1Gt4",
-  authDomain: "forex-hr-system.firebaseapp.com",
-  projectId: "forex-hr-system",
-  storageBucket: "forex-hr-system.firebasestorage.app",
-  messagingSenderId: "645362261308",
-  appId: "1:645362261308:web:d4ae33c48c8dd573281239",
-  measurementId: "G-FRE3FKX80Q"
+  apiKey: "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "your-project-id.firebaseapp.com",
+  projectId: "your-project-id",
+  storageBucket: "your-project-id.appspot.com",
+  messagingSenderId: "123456789",
+  appId: "1:123456789:web:abcdef123456"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-// Глобальные ссылки на функции Firestore для использования в Alpine
-window._db = db;
-window._collection = collection;
-window._doc = doc;
-window._getDoc = getDoc;
-window._getDocs = getDocs;
-window._addDoc = addDoc;
-window._updateDoc = updateDoc;
-window._deleteDoc = deleteDoc;
-window._query = query;
-window._where = where;
-window._orderBy = orderBy;
-window._serverTimestamp = serverTimestamp;
+// Инициализация Firebase
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 function app() {
   return {
+    // === STATE ===
     screen: 'cities',
     isHR: false,
     showLogin: false,
@@ -670,6 +646,7 @@ function app() {
       { text: "Сколько человек готовы поехать с вами?", key: "teamSize", placeholder: "1 (только я)", subtext: "Командой или одиночка?" }
     ],
 
+    // === COMPUTED ===
     get totalSteps() { return this.questions.length + 2; },
     get progress() { return Math.round(((this.currentStep - 1) / (this.totalSteps - 1)) * 100); },
 
@@ -708,33 +685,37 @@ function app() {
       }).length;
     },
 
+    // === INIT ===
     async init() {
       this.loading = true;
       this.loadingText = 'Загрузка вакансий...';
       try {
         await this.loadVacancies();
 
+        // Проверяем реферал в URL
         const params = new URLSearchParams(window.location.search);
         const hrRef = params.get('hr');
         if (hrRef) {
-          const docSnap = await _getDoc(_doc(_db, 'hr_accounts', hrRef.toLowerCase()));
-          if (docSnap.exists()) {
-            this.assignedHR = docSnap.data().name;
+          const doc = await db.collection('hr_accounts').doc(hrRef.toLowerCase()).get();
+          if (doc.exists) {
+            this.assignedHR = doc.data().name;
           }
         }
 
+        // Проверяем сохранённую сессию
         const savedSession = localStorage.getItem('hr_session');
         if (savedSession) {
           try {
             const session = JSON.parse(savedSession);
             if (session.login && session.name) {
-              const docSnap = await _getDoc(_doc(_db, 'hr_accounts', session.login));
-              if (docSnap.exists()) {
+              // Проверяем, что аккаунт всё ещё существует
+              const doc = await db.collection('hr_accounts').doc(session.login).get();
+              if (doc.exists) {
                 this.isHR = true;
                 this.currentUser = session.name;
                 this.currentLogin = session.login;
-                this.hrContacts.whatsapp = docSnap.data().whatsapp || '';
-                this.hrContacts.telegram = docSnap.data().telegram || '';
+                this.hrContacts.whatsapp = doc.data().whatsapp || '';
+                this.hrContacts.telegram = doc.data().telegram || '';
                 await this.loadApplications();
                 if (window.innerWidth >= 768) this.sidebarOpen = true;
               }
@@ -749,27 +730,28 @@ function app() {
       }
     },
 
+    // === FIREBASE METHODS ===
     async loadVacancies() {
-      const snapshot = await _getDocs(_collection(_db, 'vacancies'));
+      const snapshot = await db.collection('vacancies').get();
       this.vacancies = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     },
 
     async loadApplications() {
       if (!this.currentLogin) return;
-      const q = _query(
-        _collection(_db, 'applications'),
-        _where('hrManager', '==', this.currentLogin),
-        _orderBy('date', 'desc')
-      );
-      const snapshot = await _getDocs(q);
+      const snapshot = await db.collection('applications')
+        .where('hrManager', '==', this.currentLogin)
+        .orderBy('date', 'desc')
+        .get();
       this.applications = snapshot.docs.map(d => ({ id: d.id, ...d.data() }));
     },
 
+    // === TOAST ===
     showToast(message, type = 'success') {
       this.toast = { show: true, message, type };
       setTimeout(() => this.toast.show = false, 3000);
     },
 
+    // === NAVIGATION ===
     selectCity(city) { this.selectedCity = city; this.screen = 'vacancies'; },
     backToCities() { this.selectedCity = null; this.screen = 'cities'; },
     getVacanciesByCity() { return this.vacancies.filter(v => v.city === this.selectedCity); },
@@ -794,11 +776,12 @@ function app() {
     },
     prevStep() { if (this.currentStep > 1) this.currentStep--; },
 
+    // === APPLICATION SUBMIT ===
     async submitApplication() {
       this.loading = true;
       this.loadingText = 'Отправка анкеты...';
       try {
-        await _addDoc(_collection(_db, 'applications'), {
+        const appData = {
           name: this.form.name,
           phone: this.form.phone,
           city: this.selectedCity,
@@ -809,8 +792,9 @@ function app() {
           results: this.form.results,
           teamSize: this.form.teamSize,
           hrManager: this.assignedHR || this.currentLogin || 'general',
-          date: _serverTimestamp()
-        });
+          date: firebase.firestore.FieldValue.serverTimestamp()
+        };
+        await db.collection('applications').add(appData);
         this.showToast('Анкета успешно отправлена!');
       } catch(e) {
         console.error('Submit error:', e);
@@ -858,17 +842,18 @@ function app() {
 
     resetAll() { this.screen = 'cities'; this.selectedCity = null; this.selectedVacancy = null; this.currentStep = 1; this.form = {}; },
 
+    // === AUTH ===
     async login() {
       this.loading = true;
       this.loadingText = 'Вход...';
       try {
         const user = this.loginUser.toLowerCase().trim();
-        const docSnap = await _getDoc(_doc(_db, 'hr_accounts', user));
-        if (!docSnap.exists() || docSnap.data().pass !== this.loginPass) {
+        const doc = await db.collection('hr_accounts').doc(user).get();
+        if (!doc.exists || doc.data().pass !== this.loginPass) {
           this.showToast('Неверные данные для входа', 'error');
           return;
         }
-        const data = docSnap.data();
+        const data = doc.data();
         this.isHR = true;
         this.currentUser = data.name;
         this.currentLogin = user;
@@ -879,6 +864,7 @@ function app() {
         this.loginPass = '';
         this.hrTab = 'dashboard';
 
+        // Сохраняем сессию
         localStorage.setItem('hr_session', JSON.stringify({ login: user, name: data.name }));
 
         await this.loadApplications();
@@ -906,6 +892,7 @@ function app() {
       localStorage.removeItem('hr_session');
     },
 
+    // === SETTINGS ===
     async updateCredentials() {
       if (this.newPass && this.newPass !== this.confirmPass) {
         return this.showToast('Пароли не совпадают', 'error');
@@ -919,7 +906,7 @@ function app() {
 
       this.loading = true;
       try {
-        await _updateDoc(_doc(_db, 'hr_accounts', this.currentLogin), { pass: this.newPass });
+        await db.collection('hr_accounts').doc(this.currentLogin).update({ pass: this.newPass });
         this.newPass = '';
         this.confirmPass = '';
         this.showToast('Пароль обновлён!');
@@ -940,7 +927,7 @@ function app() {
 
       this.loading = true;
       try {
-        await _updateDoc(_doc(_db, 'hr_accounts', this.currentLogin), {
+        await db.collection('hr_accounts').doc(this.currentLogin).update({
           whatsapp: this.hrContacts.whatsapp,
           telegram: this.hrContacts.telegram
         });
@@ -952,6 +939,7 @@ function app() {
       }
     },
 
+    // === VACANCIES CRUD ===
     editVacancy(vac) { vac.isEditing = true; },
 
     cancelVacancyEdit(vac) {
@@ -965,7 +953,7 @@ function app() {
     async saveVacancyEdit(vac) {
       this.loading = true;
       try {
-        await _updateDoc(_doc(_db, 'vacancies', vac.id), {
+        await db.collection('vacancies').doc(vac.id).update({
           title: vac.editTitle,
           salary: vac.editSalary,
           description: vac.editDescription,
@@ -985,7 +973,7 @@ function app() {
       if (!confirm('Удалить вакансию?')) return;
       this.loading = true;
       try {
-        await _deleteDoc(_doc(_db, 'vacancies', id));
+        await db.collection('vacancies').doc(id).delete();
         await this.loadVacancies();
         this.showToast('Вакансия удалена');
       } catch(e) {
@@ -1001,12 +989,12 @@ function app() {
       }
       this.loading = true;
       try {
-        await _addDoc(_collection(_db, 'vacancies'), {
+        await db.collection('vacancies').add({
           city: this.newVacancy.city,
           title: this.newVacancy.title,
           salary: this.newVacancy.salary,
           description: this.newVacancy.description,
-          createdAt: _serverTimestamp()
+          createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
         await this.loadVacancies();
         this.showAddVacancy = false;
@@ -1019,6 +1007,7 @@ function app() {
       }
     },
 
+    // === UTILS ===
     copyLink() {
       navigator.clipboard.writeText(this.personalLink).then(() => this.showToast('Ссылка скопирована!'));
     },
@@ -1048,9 +1037,6 @@ function app() {
     }
   }
 }
-
-// Экспортируем функцию app в глобальную область для Alpine
-window.app = app;
 </script>
 </body>
 </html>
