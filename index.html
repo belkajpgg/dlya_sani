@@ -523,10 +523,14 @@ function supabaseFetch(table, options = {}) {
   if (options.body && typeof options.body === 'object') {
     opts.body = JSON.stringify(options.body);
   }
+
+  console.log('[Supabase] Request:', url, opts.method || 'GET', options.body || '');
+
   return fetch(url, opts).then(async r => {
     const text = await r.text();
+    console.log('[Supabase] Response status:', r.status, 'body:', text.substring(0, 200));
     if (!r.ok) {
-      console.error('Supabase error:', r.status, text);
+      console.error('[Supabase] ERROR:', r.status, text);
       throw new Error(`HTTP ${r.status}: ${text}`);
     }
     try { return JSON.parse(text); } catch(e) { return text; }
@@ -583,8 +587,19 @@ function app() {
       { id: 12, city: "Бар", title: "Тимлид Удержания", salary: "$3,000 – $4,500 / мес", description: "Управление отделом удержания" }
     ],
 
-    dbVacancies: [],  // from Supabase
-    hrAccounts: {},
+    // ===== DEFAULT HR ACCOUNTS (FALLBACK) =====
+    defaultHRAccounts: {
+      "nik":     { pass: "1234", name: "Nik",     whatsapp: "79990000001", telegram: "nik_hr" },
+      "elya":    { pass: "1234", name: "Elya",    whatsapp: "79990000002", telegram: "elya_hr" },
+      "tori":    { pass: "1234", name: "TORI",    whatsapp: "79990000003", telegram: "tori_hr" },
+      "jenya":   { pass: "1234", name: "JENYA",   whatsapp: "79990000004", telegram: "jenya_hr" },
+      "sanya":   { pass: "1234", name: "SANYA",   whatsapp: "79990000005", telegram: "sanya_hr" },
+      "valeria": { pass: "1234", name: "VALERIA", whatsapp: "79990000006", telegram: "valeria_hr" },
+      "sasha":   { pass: "1234", name: "SASHA",   whatsapp: "79990000007", telegram: "sasha_hr" }
+    },
+
+    dbVacancies: [],
+    dbHRAccounts: {},
     applications: [],
 
     questions: [
@@ -596,6 +611,7 @@ function app() {
     ],
 
     async init() {
+      console.log('[Init] Starting...');
       await this.loadHRAccounts();
       await this.loadVacancies();
 
@@ -603,7 +619,9 @@ function app() {
       const hrRef = params.get('hr');
       if (hrRef && this.hrAccounts[hrRef.toLowerCase()]) {
         this.assignedHR = this.hrAccounts[hrRef.toLowerCase()].name;
+        console.log('[Init] Assigned HR:', this.assignedHR);
       }
+      console.log('[Init] Complete. HR accounts loaded:', Object.keys(this.hrAccounts).length);
     },
 
     // ===== VACANCIES: use DB if available, else fallback =====
@@ -611,13 +629,19 @@ function app() {
       return this.dbVacancies.length > 0 ? this.dbVacancies : this.defaultVacancies;
     },
 
+    // ===== HR ACCOUNTS: use DB if available, else fallback =====
+    get hrAccounts() {
+      return Object.keys(this.dbHRAccounts).length > 0 ? this.dbHRAccounts : this.defaultHRAccounts;
+    },
+
     async loadVacancies() {
       try {
         const data = await supabaseFetch('vacancies?select=*&order=id.asc');
         this.dbVacancies = Array.isArray(data) ? data : [];
         this.dbVacanciesLoaded = true;
+        console.log('[Vacancies] Loaded from DB:', this.dbVacancies.length);
       } catch(e) {
-        console.error('Failed to load vacancies:', e);
+        console.error('[Vacancies] Failed to load:', e);
         this.dbVacancies = [];
       }
     },
@@ -625,12 +649,16 @@ function app() {
     async loadHRAccounts() {
       try {
         const data = await supabaseFetch('hr_accounts?select=*');
-        this.hrAccounts = {};
-        (Array.isArray(data) ? data : []).forEach(acc => {
-          this.hrAccounts[acc.username.toLowerCase()] = acc;
+        this.dbHRAccounts = {};
+        const arr = Array.isArray(data) ? data : [];
+        console.log('[HR] Raw DB response:', arr);
+        arr.forEach(acc => {
+          this.dbHRAccounts[acc.username.toLowerCase()] = acc;
         });
+        console.log('[HR] Loaded from DB:', Object.keys(this.dbHRAccounts).length, 'accounts');
       } catch(e) {
-        console.error('Failed to load HR accounts:', e);
+        console.error('[HR] Failed to load from DB, using fallback:', e);
+        this.dbHRAccounts = {};
       }
     },
 
@@ -640,8 +668,9 @@ function app() {
         const hrName = this.currentUser;
         const data = await supabaseFetch(`applications?select=*&hr_manager=eq.${encodeURIComponent(hrName)}&order=created_at.desc`);
         this.applications = Array.isArray(data) ? data : [];
+        console.log('[Applications] Loaded:', this.applications.length);
       } catch(e) {
-        console.error('Failed to load applications:', e);
+        console.error('[Applications] Failed to load:', e);
         this.applications = [];
       }
     },
@@ -854,7 +883,12 @@ function app() {
 
     login() {
       const user = this.loginUser.toLowerCase().trim();
+      console.log('[Login] Trying:', user, 'Pass:', this.loginPass);
+      console.log('[Login] Available accounts:', Object.keys(this.hrAccounts));
+
       const acc = this.hrAccounts[user];
+      console.log('[Login] Found account:', acc);
+
       if (acc && this.loginPass === acc.pass) {
         this.isHR = true;
         this.currentUser = acc.name;
@@ -867,7 +901,9 @@ function app() {
         this.hrContacts.telegram = acc.telegram || '';
         this.loadApplications();
         if (window.innerWidth >= 768) this.sidebarOpen = true;
+        console.log('[Login] SUCCESS as', acc.name);
       } else {
+        console.error('[Login] FAIL. Account exists:', !!acc, 'Pass match:', acc ? this.loginPass === acc.pass : 'N/A');
         alert("Неверные данные для входа");
       }
     },
